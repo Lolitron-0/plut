@@ -1,0 +1,9 @@
+---
+BasedOnStyle: LLVM
+AlignConsecutiveAssignments:
+  Enabled: true
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+ColumnLimit: 74
+InsertBraces: true
+

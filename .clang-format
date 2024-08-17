@@ -6,4 +6,5 @@ AlignConsecutiveShortCaseStatements:
   Enabled: true
 ColumnLimit: 74
 InsertBraces: true
+PointerAlignment: Left 
 

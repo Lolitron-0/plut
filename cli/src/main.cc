@@ -1,8 +1,7 @@
-#include "test.hpp"
+#include "core/SlotBase.hpp"
 #include <spdlog/spdlog.h>
 
 auto main() -> int {
-  init();
-  spdlog::info("hihiihihii");
+	plut::core::SlotBase sb{3, 5};
   return 0;
 }

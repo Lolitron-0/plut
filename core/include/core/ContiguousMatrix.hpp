@@ -8,25 +8,31 @@ concept IndexType =
     std::is_integral_v<U> && std::convertible_to<U, std::size_t>;
 
 namespace plut::core {
-template <typename T> class ContiguousDynamicMatrix {
+
+template <typename T>
+class ContiguousDynamicMatrix {
 public:
   using ValueT = std::remove_cvref_t<T>;
 
   ContiguousDynamicMatrix(std::size_t rows, std::size_t cols)
-      : m_Data(rows * cols), m_Size{rows, cols} {
-    CoreLogger().debug("{}", m_Data.capacity());
-  }
+      : m_Data(rows * cols, ValueT{}), m_Size{rows, cols} {
+			}
 
   [[nodiscard]] auto
   getSize() const -> std::pair<std::size_t, std::size_t> {
     return m_Size;
   }
 
-  class RowProxy {
+  template <typename ParentRefType>
+  class RowProxy {};
+
+  template <>
+  class RowProxy<ContiguousDynamicMatrix<T>&> {
     friend class ContiguousDynamicMatrix<T>;
 
   public:
-    template <IndexType U> auto operator[](U j) -> ValueT& {
+    template <IndexType U>
+    auto operator[](U j) -> ValueT& {
       return parent.m_Data[i * parent.m_Size.second + j];
     }
 
@@ -39,8 +45,34 @@ public:
     std::size_t i;
   };
 
-  template <IndexType U> auto operator[](U i) -> RowProxy {
-    return RowProxy{*this, static_cast<std::size_t>(i)};
+  template <>
+  class RowProxy<const ContiguousDynamicMatrix<T>&> {
+    friend class ContiguousDynamicMatrix<T>;
+
+  public:
+    template <IndexType U>
+    auto operator[](U j) -> const ValueT& {
+      return parent.m_Data[i * parent.m_Size.second + j];
+    }
+
+  private:
+    RowProxy(const ContiguousDynamicMatrix<T>& parent, std::size_t i)
+        : parent{parent}, i{i} {}
+
+  private:
+    const ContiguousDynamicMatrix<T>& parent;
+    std::size_t i;
+  };
+
+  template <IndexType U>
+  auto operator[](U i) -> RowProxy<ContiguousDynamicMatrix<T>&> {
+    return {*this, static_cast<std::size_t>(i)};
+  }
+
+  template <IndexType U>
+  auto
+  operator[](U i) const -> RowProxy<const ContiguousDynamicMatrix<T>&> {
+    return {*this, static_cast<std::size_t>(i)};
   }
 
 private:

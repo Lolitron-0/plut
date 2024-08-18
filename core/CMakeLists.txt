@@ -3,6 +3,7 @@ project(${CMAKE_PROJECT_NAME}_core)
 set(SOURCES 
 	src/SlotBase.cc
 	src/Logger.cc
+	src/Symbol.cc
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})

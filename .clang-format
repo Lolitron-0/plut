@@ -7,4 +7,5 @@ AlignConsecutiveShortCaseStatements:
 ColumnLimit: 74
 InsertBraces: true
 PointerAlignment: Left 
+AlwaysBreakTemplateDeclarations: Yes
 

@@ -4,6 +4,8 @@ set(SOURCES
 	src/SlotBase.cc
 	src/Logger.cc
 	src/Symbol.cc
+	src/Reel.cc
+	src/Board.cc
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})

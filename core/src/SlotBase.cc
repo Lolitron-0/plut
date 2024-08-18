@@ -2,27 +2,29 @@
 
 namespace plut::core {
 
-SlotBase::SlotBase(size_t rows, size_t columns) : m_Board{rows, columns} {
+SlotBase::SlotBase(std::initializer_list<Reel> reels)
+    : m_Board{ reels } {
   std::random_device rd;
   m_RandEngine.seed(rd());
 }
 
-void SlotBase::setSymbols(std::vector<Symbol>&& symbols) {
+void SlotBase::addSymbols(std::vector<Symbol>&& symbols) {
   m_Symbols = std::move(symbols);
 }
 
 void SlotBase::spin() {
-  auto [rows, cols]{m_Board.getSize()};
-  std::uniform_int_distribution<size_t> range{0, m_Symbols.size() - 1};
-  for (int i{0}; i < rows; i++) {
-    for (int j{0}; j < cols; j++) {
-      m_Board[i][j] = m_Symbols[range(m_RandEngine)];
-    }
+  m_Board.resetState();
+  for (int i{ 0 }; i < m_Board.getReels().size(); i++) {
+    std::uniform_int_distribution<int> rnd{
+      0, static_cast<int>(m_Board.getReels()[i].getSymbols().size() -
+                          m_Board.getReels()[i].getSpanSize() - 1)
+    };
+    m_Board.setReelPos(i, rnd(m_RandEngine));
   }
 }
 
-auto SlotBase::getBoard() const
+auto SlotBase::getBoardState() const
     -> const ContiguousDynamicMatrix<Symbol>& {
-  return m_Board;
+  return m_Board.getCurrentState();
 }
 } // namespace plut::core

@@ -1,20 +1,22 @@
+#pragma once
 #include "core/ContiguousMatrix.hpp"
 #include "core/Symbol.hpp"
+#include "core/Board.hpp"
 #include <random>
 
 namespace plut::core {
 
 class SlotBase {
 public:
-  SlotBase(size_t rows, size_t columns);
+  SlotBase(std::initializer_list<Reel> reels);
 
-  [[nodiscard]] auto getBoard() const -> const ContiguousDynamicMatrix<Symbol>&;
-  void setSymbols(std::vector<Symbol>&& symbols);
+  [[nodiscard]] auto getBoardState() const -> const ContiguousDynamicMatrix<Symbol>&;
+  void addSymbols(std::vector<Symbol>&& symbols);
 
   void spin();
 
 private:
-  ContiguousDynamicMatrix<Symbol> m_Board;
+  Board m_Board;
   std::vector<Symbol> m_Symbols;
   std::mt19937_64 m_RandEngine;
 };

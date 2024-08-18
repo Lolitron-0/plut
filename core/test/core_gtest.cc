@@ -1,28 +1,30 @@
-#include <mutex>
+#include "core/Board.hpp"
 #include "core/ContiguousMatrix.hpp"
+#include "core/Reel.hpp"
 #include <gtest/gtest.h>
+#include <mutex>
 
 using namespace plut::core;
 
 TEST(Matrix, Types) {
-  ContiguousDynamicMatrix<int> m1{1, 1};
-  ContiguousDynamicMatrix<std::string> m2{1, 1};
+  ContiguousDynamicMatrix<int> m1{ 1, 1 };
+  ContiguousDynamicMatrix<std::string> m2{ 1, 1 };
   ContiguousDynamicMatrix<std::shared_ptr<
       std::vector<std::pair<std::string, std::tuple<int, std::mutex>>>>>
-      m3{1, 1};
+      m3{ 1, 1 };
 }
 
 TEST(Matrix, BigAlloc) {
-  ContiguousDynamicMatrix<double> mat{1000, 1001};
+  ContiguousDynamicMatrix<double> mat{ 1000, 1001 };
   EXPECT_EQ(mat.getSize().first, 1000);
   EXPECT_EQ(mat.getSize().second, 1001);
 }
 
 TEST(Matrix, IndexOperatorTypes) {
-  ContiguousDynamicMatrix<int> mat{5, 5};
+  ContiguousDynamicMatrix<int> mat{ 5, 5 };
 
-  mat[(signed char)0][(unsigned char)0];
-  mat[(unsigned char)0][(signed char)0];
+  mat[(signed char)0][(unsigned char)0] = 0; // non-const
+  mat[(unsigned char)0][(signed char)0] = 0; // non-const
   mat[(short)0][(unsigned short)0];
   mat[(unsigned short)0][(short)0];
   mat[(int)0][(unsigned int)0];
@@ -34,12 +36,12 @@ TEST(Matrix, IndexOperatorTypes) {
 }
 
 TEST(Matrix, IndexOperator) {
-  ContiguousDynamicMatrix<int> mat{5, 5};
+  ContiguousDynamicMatrix<int> mat{ 5, 5 };
 
-  auto [rows, cols]{mat.getSize()};
+  auto [rows, cols]{ mat.getSize() };
 
-  for (int i{0}; i < rows; i++) {
-    for (int j{0}; j < cols; j++) {
+  for (int i{ 0 }; i < rows; i++) {
+    for (int j{ 0 }; j < cols; j++) {
       mat[i][j] = i * cols + j;
     }
   }
@@ -73,4 +75,31 @@ TEST(Matrix, IndexOperator) {
   EXPECT_EQ(mat[4][2], 22);
   EXPECT_EQ(mat[4][3], 23);
   EXPECT_EQ(mat[4][4], 24);
+}
+
+TEST(Reel, BoundValues) {
+  EXPECT_THROW(([] {
+                 Reel r{ 10, { Symbol{ '1' }, Symbol{ '2' } } };
+               }()),
+               ReelTooSmallException);
+  EXPECT_THROW(([] {
+                 Reel r{ 1, {} };
+               }()),
+               ReelTooSmallException);
+  EXPECT_NO_THROW(([] {
+    Reel r{ 2, { Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' } } };
+  }()));
+  EXPECT_NO_THROW(([] {
+    Reel r{ 2, { Symbol{ '1' }, Symbol{ '2' } } };
+  }()));
+}
+
+TEST(Board, StateSize) {
+  Reel r1{ 1, { Symbol{ '1' }, Symbol{ '2' } } };
+  Reel r2{ 2, { Symbol{ '1' }, Symbol{ '2' } } };
+  Reel r3{ 3, { Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' } } };
+  Reel r4{ 2, { Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' } } };
+  Board b{ r1, r2, r3, r4 };
+  EXPECT_EQ(b.getCurrentState().getSize().first, 3);
+  EXPECT_EQ(b.getCurrentState().getSize().second, 4);
 }

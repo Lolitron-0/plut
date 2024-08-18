@@ -1,3 +1,4 @@
+#pragma once
 #include "core/Logger.hpp"
 #include <concepts>
 #include <type_traits>
@@ -15,13 +16,16 @@ public:
   using ValueT = std::remove_cvref_t<T>;
 
   ContiguousDynamicMatrix(std::size_t rows, std::size_t cols)
-      : m_Data(rows * cols, ValueT{}), m_Size{rows, cols} {
-			}
+      : m_Data(rows * cols, ValueT{}),
+        m_Size{ rows, cols } {}
 
   [[nodiscard]] auto
   getSize() const -> std::pair<std::size_t, std::size_t> {
     return m_Size;
   }
+
+  auto begin() { return m_Data.begin(); }
+  auto end() { return m_Data.end(); }
 
   template <typename ParentRefType>
   class RowProxy {};
@@ -38,7 +42,8 @@ public:
 
   private:
     RowProxy(ContiguousDynamicMatrix<T>& parent, std::size_t i)
-        : parent{parent}, i{i} {}
+        : parent{ parent },
+          i{ i } {}
 
   private:
     ContiguousDynamicMatrix<T>& parent;
@@ -57,7 +62,8 @@ public:
 
   private:
     RowProxy(const ContiguousDynamicMatrix<T>& parent, std::size_t i)
-        : parent{parent}, i{i} {}
+        : parent{ parent },
+          i{ i } {}
 
   private:
     const ContiguousDynamicMatrix<T>& parent;
@@ -66,13 +72,13 @@ public:
 
   template <IndexType U>
   auto operator[](U i) -> RowProxy<ContiguousDynamicMatrix<T>&> {
-    return {*this, static_cast<std::size_t>(i)};
+    return { *this, static_cast<std::size_t>(i) };
   }
 
   template <IndexType U>
   auto
   operator[](U i) const -> RowProxy<const ContiguousDynamicMatrix<T>&> {
-    return {*this, static_cast<std::size_t>(i)};
+    return { *this, static_cast<std::size_t>(i) };
   }
 
 private:

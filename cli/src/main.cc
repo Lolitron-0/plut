@@ -3,7 +3,6 @@
 #include <spdlog/spdlog.h>
 
 auto main() -> int {
-  using plut::core::Reel;
   using plut::core::Symbol;
 
   Symbol symK{ 'K' };
@@ -13,13 +12,7 @@ auto main() -> int {
   Symbol symW{ 'W' };
   Symbol symB{ 'B' };
 
-  plut::core::SlotBase sb{
-    Reel{ 3, { symA, symB, symJ, symJ, symW, symB } },
-    Reel{ 3, { symB, symA, symA, symK, symQ, symJ } },
-    Reel{ 3, { symJ, symJ, symK, symQ, symJ, symB } },
-    Reel{ 3, { symQ, symK, symQ, symK, symJ, symW } },
-    Reel{ 3, { symW, symW, symB, symJ, symQ, symW } },
-  };
+  plut::core::SlotBase sb{ 3, 5 };
 
   sb.spin();
 

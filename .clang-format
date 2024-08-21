@@ -11,3 +11,4 @@ AlwaysBreakTemplateDeclarations: Yes
 PackConstructorInitializers: Never
 Cpp11BracedListStyle: false
 AllowShortLambdasOnASingleLine: None
+PenaltyReturnTypeOnItsOwnLine: 1000000

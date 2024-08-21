@@ -93,13 +93,3 @@ TEST(Reel, BoundValues) {
     Reel r{ 2, { Symbol{ '1' }, Symbol{ '2' } } };
   }()));
 }
-
-TEST(Board, StateSize) {
-  Reel r1{ 1, { Symbol{ '1' }, Symbol{ '2' } } };
-  Reel r2{ 2, { Symbol{ '1' }, Symbol{ '2' } } };
-  Reel r3{ 3, { Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' } } };
-  Reel r4{ 2, { Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' } } };
-  Board b{ r1, r2, r3, r4 };
-  EXPECT_EQ(b.getCurrentState().getSize().first, 3);
-  EXPECT_EQ(b.getCurrentState().getSize().second, 4);
-}

@@ -3,7 +3,7 @@
 
 namespace plut::core {
 
-bool LoggerBase::s_Initialized{false};
+bool LoggerBase::s_Initialized{ false };
 std::vector<spdlog::sink_ptr> LoggerBase::s_Sinks{};
 
 LoggerBase::LoggerBase(std::string_view name) {
@@ -13,7 +13,7 @@ LoggerBase::LoggerBase(std::string_view name) {
     s_Initialized = true;
   }
 
-  m_Handle = spdlog::get(std::string{name});
+  m_Handle = spdlog::get(std::string{ name });
   if (m_Handle == nullptr) {
     m_Handle = _registerSource(name);
     m_Handle->info("\"{}\" logger registered", name);
@@ -23,7 +23,7 @@ LoggerBase::LoggerBase(std::string_view name) {
 auto LoggerBase::_registerSource(std::string_view name)
     -> std::shared_ptr<spdlog::logger> {
   auto newLogger = std::make_shared<spdlog::logger>(
-      std::string{name}, s_Sinks.begin(), s_Sinks.end());
+      std::string{ name }, s_Sinks.begin(), s_Sinks.end());
 
 #ifdef PLUT_NO_LOGS
   newLogger->set_level(spdlog::level::level_enum::off);
@@ -38,5 +38,6 @@ auto LoggerBase::_registerSource(std::string_view name)
   return newLogger;
 }
 
-CoreLogger::CoreLogger() : LoggerBase{"CORE"} {}
+CoreLogger::CoreLogger()
+    : LoggerBase{ "CORE" } {}
 } // namespace plut::core

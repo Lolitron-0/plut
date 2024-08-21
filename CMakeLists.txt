@@ -13,3 +13,8 @@ add_subdirectory(core)
 add_subdirectory(benchmark)
 add_subdirectory(cli)
 add_subdirectory(server)
+
+add_custom_target(code-format
+	COMMAND "./code-format.sh"
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)

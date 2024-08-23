@@ -2,32 +2,22 @@
 #include "core/Board.hpp"
 #include "core/ContiguousMatrix.hpp"
 #include "core/Symbol.hpp"
+#include "core/Types.hpp"
 #include <random>
 
 namespace plut::core {
 
-// TODO: event driven
-struct GenerationPassResult {
-  bool rerunGeneration{ false };
-};
-
-struct WinCollectionPassResult {
-  bool rerunGeneration{ false };
-  bool endWinCollection{ false };
-};
-
 class SlotBase {
 public:
-  using GenerationPass = std::function<GenerationPassResult(Board&)>;
-  using GenerationPassBuffer = std::vector<GenerationPass>;
-  using WinCollectionPass =
-      std::function<WinCollectionPassResult(Board&)>;
+  using GenerationPassBuffer    = std::vector<GenerationPass>;
   using WinCollectionPassBuffer = std::vector<WinCollectionPass>;
 
   SlotBase(std::size_t maxRows, std::size_t maxCols);
 
   [[nodiscard]] auto getBoardState() const
       -> const ContiguousDynamicMatrix<Symbol>&;
+  [[nodiscard]] auto getTraversalPath() const -> TraversalPath;
+  void setTraversalPath(const TraversalPath& traversalPath);
   void addSymbols(std::vector<Symbol>&& symbols);
 
   void spin();
@@ -45,6 +35,7 @@ private:
   std::shared_ptr<std::mt19937_64> m_RandEngine;
   GenerationPassBuffer m_GenerationPasses;
   WinCollectionPassBuffer m_WinCollectionPasses;
+  TraversalPath m_TraversalPath;
 };
 
 } // namespace plut::core

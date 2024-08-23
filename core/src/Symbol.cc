@@ -14,4 +14,7 @@ Symbol::Symbol(char tag)
 auto Symbol::getUnicodeTag() const -> char { return m_Tag; }
 
 auto Symbol::isEmpty() const -> bool { return m_Empty; }
+auto Symbol::isDisabled() const -> bool { return m_Disabled; }
+void Symbol::disable() { m_Disabled = true; }
+void Symbol::enable() { m_Disabled = false; }
 } // namespace plut::core

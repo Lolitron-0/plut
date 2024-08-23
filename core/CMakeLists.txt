@@ -6,6 +6,7 @@ set(SOURCES
 	src/Symbol.cc
 	src/Reel.cc
 	src/Board.cc
+	src/PassPresets.cc
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})

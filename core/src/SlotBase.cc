@@ -17,7 +17,7 @@ void SlotBase::spin() {
 
 generation:;
   for (auto&& generationPass : m_GenerationPasses) {
-    auto result{ std::invoke(generationPass, m_Board) };
+    auto result{ std::invoke(generationPass, *this, m_RandEngine) };
     if (result.rerunGeneration) {
       goto generation;
     }
@@ -50,4 +50,10 @@ void SlotBase::registerWinCollectionPass(
   m_WinCollectionPasses.push_back(newPass);
 }
 
+auto SlotBase::getTraversalPath() const -> TraversalPath {
+  return m_TraversalPath;
+}
+void SlotBase::setTraversalPath(const TraversalPath& traversalPath) {
+  m_TraversalPath = traversalPath;
+};
 } // namespace plut::core

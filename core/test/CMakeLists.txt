@@ -11,11 +11,14 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_compile_definitions(PLUT_NO_LOGS)
+add_compile_definitions(PLUT_NO_LOGS=1)
 
 add_executable(${PROJECT_NAME} core_gtest.cc)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PARENT_PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE GTest::gtest_main GTest::gtest)
+
+# target_compile_options(${PROJECT_NAME} PRIVATE "-fsanitize=address")
+# target_link_options(${PROJECT_NAME} PRIVATE "-fsanitize=address")
 
 include(GoogleTest)
 gtest_discover_tests(${PROJECT_NAME})

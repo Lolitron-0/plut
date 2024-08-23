@@ -9,4 +9,9 @@ auto Board::getCurrentState() const
     -> const ContiguousDynamicMatrix<Symbol>& {
   return m_CurrentState;
 }
+
+auto Board::getCurrentState() -> ContiguousDynamicMatrix<Symbol>& {
+  return m_CurrentState;
+}
+
 } // namespace plut::core

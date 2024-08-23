@@ -14,13 +14,15 @@ public:
 
   SlotBase(std::size_t maxRows, std::size_t maxCols);
 
-  [[nodiscard]] auto getBoardState() const
-      -> const ContiguousDynamicMatrix<Symbol>&;
+  [[nodiscard]] auto getSymbols() const -> std::vector<Symbol>;
   [[nodiscard]] auto getTraversalPath() const -> TraversalPath;
   void setTraversalPath(const TraversalPath& traversalPath);
-  void addSymbols(std::vector<Symbol>&& symbols);
+  void setSymbols(std::vector<Symbol>&& symbols);
 
   void spin();
+
+public:
+  Board board;
 
 protected:
   void registerGenerationPass(const GenerationPass& newPass);
@@ -30,7 +32,6 @@ private:
   void _resetState();
 
 private:
-  Board m_Board;
   std::vector<Symbol> m_Symbols;
   std::shared_ptr<std::mt19937_64> m_RandEngine;
   GenerationPassBuffer m_GenerationPasses;

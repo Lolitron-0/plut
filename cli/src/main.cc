@@ -16,10 +16,10 @@ auto main() -> int {
 
   sb.spin();
 
-  auto [rows, cols]{ sb.getBoardState().getSize() };
+  auto [rows, cols]{ sb.board.getSize() };
   for (int i{ 0 }; i < rows; i++) {
     for (int j{ 0 }; j < cols; j++) {
-      std::cout << sb.getBoardState()[i][j].getUnicodeTag() << ' ';
+      std::cout << sb.board[i][j].getTag() << ' ';
     }
     std::cout << std::endl;
   }

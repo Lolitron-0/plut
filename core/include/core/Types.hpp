@@ -22,7 +22,7 @@ struct WinCollectionPassResult {
 using RandEngineRef = std::shared_ptr<std::mt19937_64>;
 using GenerationPass =
     std::function<GenerationPassResult(SlotBase&, const RandEngineRef&)>;
-using WinCollectionPass = std::function<WinCollectionPassResult(Board&)>;
+using WinCollectionPass = std::function<WinCollectionPassResult(SlotBase&)>;
 using TraversalPath = std::vector<std::pair<int, int>>;
 
 } // namespace plut::core

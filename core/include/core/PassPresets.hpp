@@ -5,7 +5,7 @@ namespace plut::core::PassPresets {
 
 namespace Generation {
 
-extern const GenerationPass RandomizeBoard;
+extern const GenerationPass UniformRandomizeBoardPass;
 
 } // namespace Generation
 	

@@ -5,7 +5,7 @@
             "name": "(lldb) Launch",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/cli/plut_cli",
+            "program": "${workspaceFolder}/build/core/test/plut_core_tests",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

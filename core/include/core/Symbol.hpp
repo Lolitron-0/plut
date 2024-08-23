@@ -7,7 +7,7 @@ public:
   Symbol();
   explicit Symbol(char tag);
 
-  [[nodiscard]] auto getUnicodeTag() const -> char;
+  [[nodiscard]] auto getTag() const -> char;
   [[nodiscard]] auto isEmpty() const -> bool;
   [[nodiscard]] auto isDisabled() const -> bool;
   void disable();

@@ -19,14 +19,19 @@ public:
       : m_Data(rows * cols, ValueT{}),
         m_Size{ rows, cols } {}
 
-  [[nodiscard]] auto
-  getSize() const -> std::pair<std::size_t, std::size_t> {
-    return m_Size;
-  }
+  struct Dimensions {
+    std::size_t rows;
+    std::size_t columns;
+
+    /* implicit */ operator std::pair<std::size_t, std::size_t>() const {
+      return std::make_pair(rows, columns);
+    }
+  };
+
+  [[nodiscard]] auto getSize() const -> Dimensions { return m_Size; }
 
   auto begin() { return m_Data.begin(); }
   auto end() { return m_Data.end(); }
-
   template <typename ParentRefType>
   class RowProxy {};
 
@@ -37,7 +42,7 @@ public:
   public:
     template <IndexType U>
     auto operator[](U j) -> ValueT& {
-      return parent.m_Data[i * parent.m_Size.second + j];
+      return parent.m_Data[i * parent.m_Size.columns + j];
     }
 
   private:
@@ -57,7 +62,7 @@ public:
   public:
     template <IndexType U>
     auto operator[](U j) -> const ValueT& {
-      return parent.m_Data[i * parent.m_Size.second + j];
+      return parent.m_Data[i * parent.m_Size.columns + j];
     }
 
   private:
@@ -76,13 +81,13 @@ public:
   }
 
   template <IndexType U>
-  auto
-  operator[](U i) const -> RowProxy<const ContiguousDynamicMatrix<T>&> {
+  auto operator[](U i) const
+      -> RowProxy<const ContiguousDynamicMatrix<T>&> {
     return { *this, static_cast<std::size_t>(i) };
   }
 
 private:
   std::vector<ValueT> m_Data;
-  std::pair<std::size_t, std::size_t> m_Size;
+  Dimensions m_Size;
 };
 } // namespace plut::core

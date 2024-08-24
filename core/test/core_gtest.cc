@@ -105,14 +105,14 @@ TEST(GenerationPassPreset, UniformRandomizeBoardPass) {
     }
   };
   TestSlot s;
-	s.setSymbols({
-			Symbol{'1'},
-			Symbol{'2'},
-			Symbol{'3'},
-			Symbol{'4'},
-			Symbol{'5'},
-			Symbol{'6'},
-			});
+  s.setSymbols({
+      Symbol{ '1' },
+      Symbol{ '2' },
+      Symbol{ '3' },
+      Symbol{ '4' },
+      Symbol{ '5' },
+      Symbol{ '6' },
+  });
 
   s.spin();
 

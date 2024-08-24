@@ -7,7 +7,7 @@ NC='\033[0m'
 
 usage_and_exit() {
 	echo "Usage:"
-	echo -e "./dev.sh ${HI}<command>${NC} [options...]"
+	echo -e " ./dev.sh ${HI}<command>${NC} [options...]"
 	echo ""
 	echo "Possible commands:"
 	echo -e " ${HI}help${NC}\t\t\t\t-\t show this message"

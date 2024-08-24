@@ -9,7 +9,8 @@ namespace Generation {
 auto uniformRandomizeBoardPassImpl(SlotBase& slot,
                                    const RandEngineRef& randEngineRef)
     -> GenerationPassResult {
-  CORE_ASSERT(slot.getSymbols().size() > 0, "No symbols to generate from");
+  CORE_ASSERT(slot.getSymbols().size() > 0,
+              "No symbols to generate from");
 
   auto [rows, cols]{ slot.board.getSize() };
   std::uniform_int_distribution<std::size_t> distrib{

@@ -1,11 +1,10 @@
-project(${CMAKE_PROJECT_NAME}_cli)
+project(${CMAKE_PROJECT_NAME}_example)
 
 set(SOURCES
-	src/main.cc
-	src/CliLogger.cc
+	src/MySlot.cc
 )
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE include/)
 

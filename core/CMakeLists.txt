@@ -1,4 +1,6 @@
 project(${CMAKE_PROJECT_NAME}_core)
+# we will link core to client's .so 
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 set(SOURCES 
 	src/SlotBase.cc

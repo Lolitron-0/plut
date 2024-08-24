@@ -1,6 +1,8 @@
 #include "core/Board.hpp"
 #include "core/ContiguousMatrix.hpp"
+#include "core/PassPresets.hpp"
 #include "core/Reel.hpp"
+#include "core/SlotBase.hpp"
 #include <gtest/gtest.h>
 #include <mutex>
 
@@ -16,8 +18,8 @@ TEST(Matrix, Types) {
 
 TEST(Matrix, BigAlloc) {
   ContiguousDynamicMatrix<double> mat{ 1000, 1001 };
-  EXPECT_EQ(mat.getSize().first, 1000);
-  EXPECT_EQ(mat.getSize().second, 1001);
+  EXPECT_EQ(mat.getSize().rows, 1000);
+  EXPECT_EQ(mat.getSize().columns, 1001);
 }
 
 TEST(Matrix, IndexOperatorTypes) {
@@ -92,4 +94,38 @@ TEST(Reel, BoundValues) {
   EXPECT_NO_THROW(([] {
     Reel r{ 2, { Symbol{ '1' }, Symbol{ '2' } } };
   }()));
+}
+
+TEST(GenerationPassPreset, UniformRandomizeBoardPass) {
+  struct TestSlot : SlotBase {
+    TestSlot()
+        : SlotBase{ 5, 5 } {
+      SlotBase::registerGenerationPass(
+          PassPresets::Generation::UniformRandomizeBoardPass);
+    }
+  };
+  TestSlot s;
+  s.setSymbols({
+      Symbol{ '1' },
+      Symbol{ '2' },
+      Symbol{ '3' },
+      Symbol{ '4' },
+      Symbol{ '5' },
+      Symbol{ '6' },
+  });
+
+  s.spin();
+
+  for (int i{ 0 }; i < s.board.getSize().rows; i++) {
+    for (int j{ 0 }; j < s.board.getSize().columns; j++) {
+      bool match{ false };
+      for (auto symbol : s.getSymbols()) {
+        if (symbol.getTag() == s.board[i][j].getTag()) {
+          match = true;
+          break;
+        }
+      }
+      EXPECT_TRUE(match);
+    }
+  }
 }

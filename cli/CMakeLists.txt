@@ -2,6 +2,7 @@ project(${CMAKE_PROJECT_NAME}_cli)
 
 set(SOURCES
 	src/main.cc
+	src/CliLogger.cc
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

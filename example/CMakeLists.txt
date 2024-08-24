@@ -1,8 +1,10 @@
-project(${CMAKE_PROJECT_NAME}_benchmark)
+project(${CMAKE_PROJECT_NAME}_example)
 
-set(SOURCES src/main.cc)
+set(SOURCES
+	src/MySlot.cc
+)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE include/)
 

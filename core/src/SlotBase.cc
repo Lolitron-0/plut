@@ -3,18 +3,19 @@
 namespace plut::core {
 
 SlotBase::SlotBase(std::size_t maxRows, std::size_t maxCols)
-    : m_Board{ maxRows, maxCols } {
+    : board{ maxRows, maxCols } {
   std::random_device rd;
   m_RandEngine = std::make_shared<std::mt19937_64>(rd());
 }
 
-void SlotBase::addSymbols(std::vector<Symbol>&& symbols) {
+void SlotBase::setSymbols(std::vector<Symbol>&& symbols) {
   m_Symbols = std::move(symbols);
 }
 
 void SlotBase::spin() {
   board.resetState();
 
+<<<<<<< HEAD
   auto generateBoard = [this]() {
     for (auto&& generationPass : m_GenerationPasses) {
       std::invoke(generationPass, *this, m_RandEngine);
@@ -34,6 +35,25 @@ void SlotBase::spin() {
       }
     }
   } while (end);
+=======
+generation:;
+  for (auto&& generationPass : m_GenerationPasses) {
+    auto result{ std::invoke(generationPass, *this, m_RandEngine) };
+    if (result.rerunGeneration) {
+      goto generation;
+    }
+  }
+
+  for (auto&& winCollectionPass : m_WinCollectionPasses) {
+    auto result{ std::invoke(winCollectionPass, *this) };
+    if (result.rerunGeneration) {
+      goto generation;
+    }
+    if (result.endWinCollection) {
+      break;
+    }
+  }
+>>>>>>> users/Lolitron-0
 }
 
 void SlotBase::registerGenerationPass(const GenerationPass& newPass) {

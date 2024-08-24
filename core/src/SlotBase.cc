@@ -15,7 +15,6 @@ void SlotBase::setSymbols(std::vector<Symbol>&& symbols) {
 void SlotBase::spin() {
   board.resetState();
 
-<<<<<<< HEAD
   auto generateBoard = [this]() {
     for (auto&& generationPass : m_GenerationPasses) {
       std::invoke(generationPass, *this, m_RandEngine);
@@ -35,25 +34,6 @@ void SlotBase::spin() {
       }
     }
   } while (end);
-=======
-generation:;
-  for (auto&& generationPass : m_GenerationPasses) {
-    auto result{ std::invoke(generationPass, *this, m_RandEngine) };
-    if (result.rerunGeneration) {
-      goto generation;
-    }
-  }
-
-  for (auto&& winCollectionPass : m_WinCollectionPasses) {
-    auto result{ std::invoke(winCollectionPass, *this) };
-    if (result.rerunGeneration) {
-      goto generation;
-    }
-    if (result.endWinCollection) {
-      break;
-    }
-  }
->>>>>>> users/Lolitron-0
 }
 
 void SlotBase::registerGenerationPass(const GenerationPass& newPass) {

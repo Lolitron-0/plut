@@ -15,25 +15,39 @@ void SlotBase::setSymbols(std::vector<Symbol>&& symbols) {
 void SlotBase::spin() {
   board.resetState();
 
-  auto generateBoard = [this]() {
-    for (auto&& generationPass : m_GenerationPasses) {
-      std::invoke(generationPass, *this, m_RandEngine);
-    }
-  };
+  // states
+  // TODO: what if a few states appear simutaniously
+  bool fillBoard{ false };
+  bool respin{ false };
 
-  bool end{ true };
   do {
-    for (auto&& winCollectionPass : m_WinCollectionPasses) {
-      auto result{ std::invoke(winCollectionPass, *this) };
-      if (result == WinCollectionPassResult::fillBoard) {
-        generateBoard();
-      } else if (result == WinCollectionPassResult::respin) {
-        generateBoard();
-        end = false;
-      } else { // why even to have result endWin?
+    do {
+      _generateBoard();
+
+      for (auto&& winCollectionPass : m_WinCollectionPasses) {
+        auto passResult{ std::invoke(winCollectionPass, *this) };
+        switch (passResult) {
+        case WinCollectionPassResult::endWin:
+          break;
+
+        case WinCollectionPassResult::fillBoardInstantly:
+          _generateBoard();
+          break;
+
+        case WinCollectionPassResult::fillBoardAfterPass:
+          fillBoard = true;
+          break;
+
+        case WinCollectionPassResult::respin:
+          respin = true;
+          break;
+
+        default:
+          break;
+        }
       }
-    }
-  } while (end);
+    } while (fillBoard);
+  } while (respin);
 }
 
 void SlotBase::registerGenerationPass(const GenerationPass& newPass) {
@@ -43,6 +57,12 @@ void SlotBase::registerGenerationPass(const GenerationPass& newPass) {
 void SlotBase::registerWinCollectionPass(
     const WinCollectionPass& newPass) {
   m_WinCollectionPasses.push_back(newPass);
+}
+
+void SlotBase::_generateBoard() {
+  for (auto&& generationPass : m_GenerationPasses) {
+    std::invoke(generationPass, *this, m_RandEngine);
+  }
 }
 
 auto SlotBase::getTraversalPath() const -> TraversalPath {

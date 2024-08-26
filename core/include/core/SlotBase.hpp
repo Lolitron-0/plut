@@ -29,7 +29,7 @@ protected:
   void registerWinCollectionPass(const WinCollectionPass& newPass);
 
 private:
-  void _resetState();
+  void _generateBoard();
 
 private:
   std::vector<Symbol> m_Symbols;

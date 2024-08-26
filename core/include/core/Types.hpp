@@ -14,8 +14,9 @@ class SlotBase;
 // TODO: maybe add states
 enum WinCollectionPassResult {
   endWin = 0,
-  fillBoard = 1,
-  respin = 2
+  fillBoardInstantly = 1,
+  fillBoardAfterPass = 2,
+  respin = 3
 };
 
 using RandEngineRef = std::shared_ptr<std::mt19937_64>;

@@ -3,6 +3,7 @@
 #include "core/ContiguousMatrix.hpp"
 #include "core/Symbol.hpp"
 #include "core/Types.hpp"
+
 #include <random>
 
 namespace plut::core {
@@ -18,6 +19,7 @@ public:
   [[nodiscard]] auto getTraversalPath() const -> TraversalPath;
   void setTraversalPath(const TraversalPath& traversalPath);
   void setSymbols(std::vector<Symbol>&& symbols);
+  void addSymbol(Symbol&& symbol);
 
   void spin();
 
@@ -29,6 +31,10 @@ protected:
   void registerWinCollectionPass(const WinCollectionPass& newPass);
 
 private:
+  [[nodiscard]] auto symbolsUniqueSet(
+      const std::vector<Symbol>& symbols) const -> bool;
+  [[nodiscard]] auto symbolsUniqueAdd(const Symbol& symbol) const
+      -> bool;
   void _generateBoard();
 
 private:

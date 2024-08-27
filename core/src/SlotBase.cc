@@ -1,4 +1,7 @@
 #include "core/SlotBase.hpp"
+#include "core/Assert.h"
+#include "core/Symbol.hpp"
+#include <set>
 
 namespace plut::core {
 
@@ -9,7 +12,16 @@ SlotBase::SlotBase(std::size_t maxRows, std::size_t maxCols)
 }
 
 void SlotBase::setSymbols(std::vector<Symbol>&& symbols) {
+  CORE_ASSERT(symbolsUniqueSet(symbols),
+              "Slot contains repeating symbols");
+  // TODO: move anyway or return?
   m_Symbols = std::move(symbols);
+}
+
+void SlotBase::addSymbol(Symbol&& symbol) {
+  CORE_ASSERT(symbolsUniqueAdd(symbol),
+              "Slot contains repeating symbols");
+  m_Symbols.emplace_back(symbol);
 }
 
 void SlotBase::spin() {
@@ -74,4 +86,22 @@ void SlotBase::setTraversalPath(const TraversalPath& traversalPath) {
 auto SlotBase::getSymbols() const -> std::vector<Symbol> {
   return m_Symbols;
 }
+
+auto SlotBase::symbolsUniqueSet(const std::vector<Symbol>& symbols) const -> bool {
+  std::set<Symbol> seen{};
+
+  for (const Symbol& s : symbols) {
+    if (seen.contains(s) != 0) {
+      return false;
+    }
+    seen.insert(s);
+  }
+  return true;
+}
+
+auto SlotBase::symbolsUniqueAdd(const Symbol& symbol) const -> bool {
+  std::set<Symbol> seen{m_Symbols.begin(), m_Symbols.end()};
+  return seen.contains(symbol);
+}
+
 } // namespace plut::core

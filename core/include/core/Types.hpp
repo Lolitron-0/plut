@@ -20,7 +20,7 @@ enum WinCollectionPassResult {
 };
 
 using RandEngineRef = std::shared_ptr<std::mt19937_64>;
-using GenerationPass =
+using FillPass =
     std::function<void(SlotBase&, const RandEngineRef&)>;
 using WinCollectionPass = std::function<WinCollectionPassResult(SlotBase&)>;
 using TraversalPath = std::vector<std::pair<int, int>>;

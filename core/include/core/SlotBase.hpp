@@ -9,7 +9,7 @@ namespace plut::core {
 
 class SlotBase {
 public:
-  using GenerationPassBuffer    = std::vector<GenerationPass>;
+  using FillPassBuffer    = std::vector<FillPass>;
   using WinCollectionPassBuffer = std::vector<WinCollectionPass>;
 
   SlotBase(std::size_t maxRows, std::size_t maxCols);
@@ -26,7 +26,7 @@ public:
   Board board;
 
 protected:
-  void registerGenerationPass(const GenerationPass& newPass);
+  void registerFillPass(const FillPass& newPass);
   void registerWinCollectionPass(const WinCollectionPass& newPass);
 
 private:
@@ -39,7 +39,7 @@ private:
 private:
   std::vector<Symbol> m_Symbols;
   std::shared_ptr<std::mt19937_64> m_RandEngine;
-  GenerationPassBuffer m_GenerationPasses;
+  FillPassBuffer m_FillPasses;
   WinCollectionPassBuffer m_WinCollectionPasses;
   TraversalPath m_TraversalPath;
 };

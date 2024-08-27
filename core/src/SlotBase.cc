@@ -78,8 +78,8 @@ void SlotBase::spin() {
   }
 }
 
-void SlotBase::registerGenerationPass(const GenerationPass& newPass) {
-  m_GenerationPasses.push_back(newPass);
+void SlotBase::registerFillPass(const FillPass& newPass) {
+  m_FillPasses.push_back(newPass);
 }
 
 void SlotBase::registerWinCollectionPass(
@@ -88,8 +88,8 @@ void SlotBase::registerWinCollectionPass(
 }
 
 void SlotBase::_fillBoard() {
-  for (auto&& generationPass : m_GenerationPasses) {
-    std::invoke(generationPass, *this, m_RandEngine);
+  for (auto&& fillPass : m_FillPasses) {
+    std::invoke(fillPass, *this, m_RandEngine);
   }
 }
 

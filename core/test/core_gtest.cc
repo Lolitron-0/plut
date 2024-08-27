@@ -114,13 +114,12 @@ TEST(SlotBase, AddSymbol) {
   EXPECT_DEATH(sb.addSymbol(Symbol{ '1' }), ".*");
 }
 
-TEST(GenerationPassPreset, UniformRandomizeBoardPass) {
+TEST(FillPassPreset, UniformRandomizeBoardPass) {
   struct TestSlot : SlotBase {
     TestSlot()
         : SlotBase{ 5, 5 } {
-      SlotBase::registerGenerationPass(
-          PassPresets::Generation::Manager::
-              getUniformRandomizeBoardPass());
+      SlotBase::registerFillPass(
+          PassPresets::Fill::Manager::getUniformRandomizeBoardPass());
     }
   };
   TestSlot s;

@@ -47,7 +47,6 @@ void LoggerBase::mute() { s_Muted = true; }
 
 void LoggerBase::unmute() { s_Muted = false; }
 
-
 CoreLogger::CoreLogger()
     : LoggerBase{ "CORE" } {}
 

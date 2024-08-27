@@ -3,14 +3,14 @@
 
 namespace plut::core::PassPresets {
 
-namespace Generation {
+namespace Fill {
 
 class Manager {
 public:
-  static auto getUniformRandomizeBoardPass() -> GenerationPass;
+  static auto getUniformRandomizeBoardPass() -> FillPass;
 };
 
-} // namespace Generation
+} // namespace Fill
 
 namespace WinCollection {} // namespace WinCollection
 

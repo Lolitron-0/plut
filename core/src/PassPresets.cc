@@ -4,11 +4,10 @@
 
 namespace plut::core::PassPresets {
 
-namespace Generation {
+namespace Fill {
 
-auto uniformRandomizeBoardPassImpl(SlotBase& slot,
-                                   const RandEngineRef& randEngineRef)
-    -> void {
+auto uniformRandomizeBoardPassImpl(
+    SlotBase& slot, const RandEngineRef& randEngineRef) -> void {
   CORE_ASSERT(slot.getSymbols().size() > 0,
               "No symbols to generate from");
 
@@ -24,10 +23,10 @@ auto uniformRandomizeBoardPassImpl(SlotBase& slot,
   }
 }
 
-auto Manager::getUniformRandomizeBoardPass() -> GenerationPass {
+auto Manager::getUniformRandomizeBoardPass() -> FillPass {
   return uniformRandomizeBoardPassImpl;
 }
 
-} // namespace Generation
+} // namespace Fill
 
 } // namespace plut::core::PassPresets

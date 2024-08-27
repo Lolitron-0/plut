@@ -3,6 +3,7 @@
 
 namespace plut::core {
 
+bool LoggerBase::s_Muted{ true };
 bool LoggerBase::s_Initialized{ false };
 std::vector<spdlog::sink_ptr> LoggerBase::s_Sinks{};
 
@@ -33,11 +34,21 @@ auto LoggerBase::_registerSource(std::string_view name)
   newLogger->set_level(spdlog::level::level_enum::trace);
 #endif
 
+  if (s_Muted) {
+    newLogger->set_level(spdlog::level::level_enum::off);
+  }
+
   spdlog::register_logger(newLogger);
   spdlog::set_pattern("%H:%M:%S.%e [%n] %^%l%$: %v");
   return newLogger;
 }
 
+void LoggerBase::mute() { s_Muted = true; }
+
+void LoggerBase::unmute() { s_Muted = false; }
+
+
 CoreLogger::CoreLogger()
     : LoggerBase{ "CORE" } {}
+
 } // namespace plut::core

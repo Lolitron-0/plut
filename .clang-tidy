@@ -15,7 +15,8 @@
   -readability-identifier-length, \
   -readability-implicit-bool-conversion, \
   -readability-redundant-access-specifiers, \
-  -bugprone-easily-swappable-parameters"
+  -bugprone-easily-swappable-parameters, \
+  -cppcoreguidelines-non-private-member-variables-in-classes"
 WarningsAsErrors: ''
 CheckOptions:
   - key: 'bugprone-argument-comment.StrictMode'

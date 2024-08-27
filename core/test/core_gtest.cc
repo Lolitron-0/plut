@@ -1,12 +1,13 @@
-#include "core/Board.hpp"
-#include "core/ContiguousMatrix.hpp"
-#include "core/PassPresets.hpp"
-#include "core/Reel.hpp"
-#include "core/SlotBase.hpp"
+#include "plut.hpp"
 #include <gtest/gtest.h>
 #include <mutex>
 
 using namespace plut::core;
+
+class InitEnv : public ::testing::Environment {
+protected:
+  void SetUp() override { LoggerBase::mute(); }
+};
 
 TEST(Matrix, Types) {
   ContiguousDynamicMatrix<int> m1{ 1, 1 };
@@ -94,6 +95,23 @@ TEST(Reel, BoundValues) {
   EXPECT_NO_THROW(([] {
     Reel r{ 2, { Symbol{ '1' }, Symbol{ '2' } } };
   }()));
+}
+
+TEST(SlotBase, SetSymbols) {
+  SlotBase sb{ 5, 5 };
+  ;
+  EXPECT_NO_FATAL_FAILURE(
+      sb.setSymbols({ Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' } }));
+  EXPECT_DEATH(
+      sb.setSymbols({ Symbol{ '1' }, Symbol{ '1' }, Symbol{ '3' } }),
+      ".*");
+}
+
+TEST(SlotBase, AddSymbol) {
+  SlotBase sb{ 5, 5 };
+  sb.setSymbols({ Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' } });
+  EXPECT_NO_FATAL_FAILURE(sb.addSymbol(Symbol{ '4' }));
+  EXPECT_DEATH(sb.addSymbol(Symbol{ '1' }), ".*");
 }
 
 TEST(GenerationPassPreset, UniformRandomizeBoardPass) {

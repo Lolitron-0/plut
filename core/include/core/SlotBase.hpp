@@ -1,6 +1,5 @@
 #pragma once
 #include "core/Board.hpp"
-#include "core/ContiguousMatrix.hpp"
 #include "core/Symbol.hpp"
 #include "core/Types.hpp"
 
@@ -18,8 +17,8 @@ public:
   [[nodiscard]] auto getSymbols() const -> std::vector<Symbol>;
   [[nodiscard]] auto getTraversalPath() const -> TraversalPath;
   void setTraversalPath(const TraversalPath& traversalPath);
-  void setSymbols(std::vector<Symbol>&& symbols);
-  void addSymbol(Symbol&& symbol);
+  void setSymbols(const std::vector<Symbol>& symbols);
+  void addSymbol(const Symbol& symbol);
 
   void spin();
 
@@ -35,7 +34,7 @@ private:
       const std::vector<Symbol>& symbols) const -> bool;
   [[nodiscard]] auto symbolsUniqueAdd(const Symbol& symbol) const
       -> bool;
-  void _generateBoard();
+  void _fillBoard();
 
 private:
   std::vector<Symbol> m_Symbols;

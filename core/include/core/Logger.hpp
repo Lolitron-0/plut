@@ -40,6 +40,9 @@ public:
     m_Handle->critical("OS message: {}", osErrorStr);
   }
 
+  static void mute();
+  static void unmute();
+
 protected:
   explicit LoggerBase(std::string_view name);
 
@@ -48,6 +51,7 @@ private:
       -> std::shared_ptr<spdlog::logger>;
 
 private:
+	static bool s_Muted;
   static bool s_Initialized;
   static std::vector<spdlog::sink_ptr> s_Sinks;
 

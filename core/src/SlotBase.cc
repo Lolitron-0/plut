@@ -1,6 +1,8 @@
 #include "core/SlotBase.hpp"
 #include "core/Assert.h"
 #include "core/Symbol.hpp"
+#include <algorithm>
+#include <list>
 #include <set>
 
 namespace plut::core {
@@ -11,55 +13,69 @@ SlotBase::SlotBase(std::size_t maxRows, std::size_t maxCols)
   m_RandEngine = std::make_shared<std::mt19937_64>(rd());
 }
 
-void SlotBase::setSymbols(std::vector<Symbol>&& symbols) {
-  CORE_ASSERT(symbolsUniqueSet(symbols),
+void SlotBase::setSymbols(const std::vector<Symbol>& symbols) {
+  CORE_ASSERT(std::set(symbols.begin(), symbols.end()).size() ==
+                  symbols.size(),
               "Slot contains repeating symbols");
-  // TODO: move anyway or return?
-  m_Symbols = std::move(symbols);
+  m_Symbols = symbols;
 }
 
-void SlotBase::addSymbol(Symbol&& symbol) {
-  CORE_ASSERT(symbolsUniqueAdd(symbol),
+void SlotBase::addSymbol(const Symbol& symbol) {
+  CORE_ASSERT(std::ranges::find(m_Symbols, symbol) == m_Symbols.end(),
               "Slot contains repeating symbols");
-  m_Symbols.emplace_back(symbol);
+  m_Symbols.push_back(symbol);
 }
 
 void SlotBase::spin() {
   board.resetState();
 
-  // states
-  // TODO: what if a few states appear simutaniously
-  bool fillBoard{ false };
-  bool respin{ false };
+  _fillBoard();
 
-  do {
-    do {
-      _generateBoard();
+  // TODO: what if a few states appear simutaneously
+  bool winCollectionInvalidated{ true };
+  std::list<std::function<void(void)>> afterPassJobs;
 
-      for (auto&& winCollectionPass : m_WinCollectionPasses) {
-        auto passResult{ std::invoke(winCollectionPass, *this) };
-        switch (passResult) {
-        case WinCollectionPassResult::endWin:
-          break;
+  while (winCollectionInvalidated) {
+    winCollectionInvalidated = false; // assume this is final collection
 
-        case WinCollectionPassResult::fillBoardInstantly:
-          _generateBoard();
-          break;
+    for (auto&& winCollectionPass : m_WinCollectionPasses) {
+      auto passResult{ std::invoke(winCollectionPass, *this) };
 
-        case WinCollectionPassResult::fillBoardAfterPass:
-          fillBoard = true;
-          break;
+      switch (passResult) {
+      case WinCollectionPassResult::endWin:
+        goto breakWinCollection;
+        break;
 
-        case WinCollectionPassResult::respin:
-          respin = true;
-          break;
+      case WinCollectionPassResult::fillBoardInstantly:
+        _fillBoard();
+        break;
 
-        default:
-          break;
-        }
+      case WinCollectionPassResult::fillBoardAfterPass:
+        winCollectionInvalidated = true;
+        afterPassJobs.emplace_back([&] {
+          _fillBoard();
+        });
+        break;
+
+      case WinCollectionPassResult::respin:
+        winCollectionInvalidated = true;
+        afterPassJobs.emplace_back([&] {
+          board.resetState();
+          _fillBoard();
+        });
+        break;
+
+      default:
+        CORE_ASSERT(false, "Unhandled pass result");
       }
-    } while (fillBoard);
-  } while (respin);
+    }
+  breakWinCollection:;
+
+    for (auto&& afterPassJob : afterPassJobs) {
+      std::invoke(afterPassJob);
+    }
+    afterPassJobs.clear();
+  }
 }
 
 void SlotBase::registerGenerationPass(const GenerationPass& newPass) {
@@ -71,7 +87,7 @@ void SlotBase::registerWinCollectionPass(
   m_WinCollectionPasses.push_back(newPass);
 }
 
-void SlotBase::_generateBoard() {
+void SlotBase::_fillBoard() {
   for (auto&& generationPass : m_GenerationPasses) {
     std::invoke(generationPass, *this, m_RandEngine);
   }
@@ -85,23 +101,6 @@ void SlotBase::setTraversalPath(const TraversalPath& traversalPath) {
 };
 auto SlotBase::getSymbols() const -> std::vector<Symbol> {
   return m_Symbols;
-}
-
-auto SlotBase::symbolsUniqueSet(const std::vector<Symbol>& symbols) const -> bool {
-  std::set<Symbol> seen{};
-
-  for (const Symbol& s : symbols) {
-    if (seen.contains(s) != 0) {
-      return false;
-    }
-    seen.insert(s);
-  }
-  return true;
-}
-
-auto SlotBase::symbolsUniqueAdd(const Symbol& symbol) const -> bool {
-  std::set<Symbol> seen{m_Symbols.begin(), m_Symbols.end()};
-  return seen.contains(symbol);
 }
 
 } // namespace plut::core

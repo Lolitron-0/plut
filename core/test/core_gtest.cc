@@ -101,7 +101,8 @@ TEST(GenerationPassPreset, UniformRandomizeBoardPass) {
     TestSlot()
         : SlotBase{ 5, 5 } {
       SlotBase::registerGenerationPass(
-          PassPresets::Generation::UniformRandomizeBoardPass);
+          PassPresets::Generation::Manager::
+              getUniformRandomizeBoardPass());
     }
   };
   TestSlot s;

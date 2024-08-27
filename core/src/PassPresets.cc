@@ -26,8 +26,9 @@ auto uniformRandomizeBoardPassImpl(SlotBase& slot,
   return GenerationPassResult{};
 }
 
-const GenerationPass UniformRandomizeBoardPass =
-    uniformRandomizeBoardPassImpl;
+auto Manager::getUniformRandomizeBoardPass() -> GenerationPass {
+  return uniformRandomizeBoardPassImpl;
+}
 
 } // namespace Generation
 

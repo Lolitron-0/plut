@@ -5,12 +5,13 @@ namespace plut::core::PassPresets {
 
 namespace Generation {
 
-extern const GenerationPass UniformRandomizeBoardPass;
+class Manager {
+public:
+  static auto getUniformRandomizeBoardPass() -> GenerationPass;
+};
 
 } // namespace Generation
-	
-namespace WinCollection {
 
-} // namespace WinCollection
+namespace WinCollection {} // namespace WinCollection
 
 } // namespace plut::core::PassPresets

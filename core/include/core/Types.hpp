@@ -10,18 +10,18 @@ namespace plut::core {
 class SlotBase;
 
 // TODO: event driven
-struct GenerationPassResult {
-  bool rerunGeneration{ false };
-};
 
-struct WinCollectionPassResult {
-  bool rerunGeneration{ false };
-  bool endWinCollection{ false };
+// TODO: maybe add states
+enum WinCollectionPassResult {
+  endWin = 0,
+  fillBoardInstantly = 1,
+  fillBoardAfterPass = 2,
+  respin = 3
 };
 
 using RandEngineRef = std::shared_ptr<std::mt19937_64>;
 using GenerationPass =
-    std::function<GenerationPassResult(SlotBase&, const RandEngineRef&)>;
+    std::function<void(SlotBase&, const RandEngineRef&)>;
 using WinCollectionPass = std::function<WinCollectionPassResult(SlotBase&)>;
 using TraversalPath = std::vector<std::pair<int, int>>;
 

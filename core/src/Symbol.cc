@@ -11,6 +11,14 @@ Symbol::Symbol(char tag)
     : m_Tag{ tag },
       m_Empty{ true } {}
 
+auto Symbol::operator==(const Symbol& symbol) const -> bool {
+  return (this->m_Tag == symbol.m_Tag);
+}
+
+auto Symbol::operator<(const Symbol& symbol) const -> bool {
+  return (this->m_Tag < symbol.m_Tag);
+}
+
 auto Symbol::getTag() const -> char { return m_Tag; }
 
 auto Symbol::isEmpty() const -> bool { return m_Empty; }

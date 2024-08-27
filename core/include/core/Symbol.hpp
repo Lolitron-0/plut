@@ -13,6 +13,9 @@ public:
   void disable();
   void enable();
 
+  [[nodiscard]] auto operator== (const Symbol& symbol) const -> bool;
+  [[nodiscard]] auto operator< (const Symbol& symbol) const -> bool;
+
 private:
   char m_Tag;
   bool m_Empty;

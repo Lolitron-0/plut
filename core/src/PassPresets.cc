@@ -8,7 +8,7 @@ namespace Generation {
 
 auto uniformRandomizeBoardPassImpl(SlotBase& slot,
                                    const RandEngineRef& randEngineRef)
-    -> GenerationPassResult {
+    -> void {
   CORE_ASSERT(slot.getSymbols().size() > 0,
               "No symbols to generate from");
 
@@ -22,8 +22,6 @@ auto uniformRandomizeBoardPassImpl(SlotBase& slot,
       slot.board[i][j] = slot.getSymbols()[rnd];
     }
   }
-
-  return GenerationPassResult{};
 }
 
 auto Manager::getUniformRandomizeBoardPass() -> GenerationPass {

@@ -18,7 +18,7 @@ auto loadCustomSlotBuilderFn(std::string_view pathToLib)
   if (!handle) {
     CliLogger().syscritical("Could not open slot shared library: {}",
                             pathToLib);
-    std::exit(1);
+    std::exit(1); // NOLINT (one thread)
   }
 
   core::SlotBase* (*buildFunc)(){ nullptr };
@@ -28,7 +28,7 @@ auto loadCustomSlotBuilderFn(std::string_view pathToLib)
     CliLogger().syscritical("Could not load builder symbol (did you "
                             "forget to add DEFINE_SLOT_BUILDER?): {}",
                             pathToLib);
-    std::exit(1);
+    std::exit(1); // NOLINT (one thread)
   }
 
   return buildFunc;

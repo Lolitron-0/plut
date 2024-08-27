@@ -3,7 +3,8 @@
 MySlot::MySlot()
     : pc::SlotBase{ 5, 5 } {
   pc::SlotBase::registerGenerationPass(
-      pc::PassPresets::Generation::UniformRandomizeBoardPass);
+      pc::PassPresets::Generation::Manager::
+          getUniformRandomizeBoardPass());
 
   pc::Symbol symK{ 'K' };
   pc::Symbol symQ{ 'Q' };

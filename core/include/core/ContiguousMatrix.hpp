@@ -32,6 +32,7 @@ public:
 
   auto begin() { return m_Data.begin(); }
   auto end() { return m_Data.end(); }
+
   template <typename ParentRefType>
   class RowProxy {};
 
@@ -41,12 +42,12 @@ public:
 
   public:
     template <IndexType U>
-    auto operator[](U j) -> ValueT& {
+    constexpr auto operator[](U j) -> ValueT& {
       return parent.m_Data[i * parent.m_Size.columns + j];
     }
 
   private:
-    RowProxy(ContiguousDynamicMatrix<T>& parent, std::size_t i)
+    constexpr RowProxy(ContiguousDynamicMatrix<T>& parent, std::size_t i)
         : parent{ parent },
           i{ i } {}
 
@@ -61,12 +62,12 @@ public:
 
   public:
     template <IndexType U>
-    auto operator[](U j) -> const ValueT& {
+    constexpr auto operator[](U j) -> const ValueT& {
       return parent.m_Data[i * parent.m_Size.columns + j];
     }
 
   private:
-    RowProxy(const ContiguousDynamicMatrix<T>& parent, std::size_t i)
+    constexpr RowProxy(const ContiguousDynamicMatrix<T>& parent, std::size_t i)
         : parent{ parent },
           i{ i } {}
 
@@ -76,12 +77,12 @@ public:
   };
 
   template <IndexType U>
-  auto operator[](U i) -> RowProxy<ContiguousDynamicMatrix<T>&> {
+  constexpr auto operator[](U i) -> RowProxy<ContiguousDynamicMatrix<T>&> {
     return { *this, static_cast<std::size_t>(i) };
   }
 
   template <IndexType U>
-  auto operator[](U i) const
+  constexpr auto operator[](U i) const
       -> RowProxy<const ContiguousDynamicMatrix<T>&> {
     return { *this, static_cast<std::size_t>(i) };
   }

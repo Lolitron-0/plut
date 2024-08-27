@@ -10,11 +10,12 @@ usage_and_exit() {
 	echo -e " ./dev.sh ${HI}<command>${NC} [options...]"
 	echo ""
 	echo "Possible commands:"
-	echo -e " ${HI}help${NC}\t\t\t\t-\t show this message"
-	echo -e " ${HI}build${NC}\t\t\t\t-\t build all"
-	echo -e " ${HI}cli${NC}\t\t\t\t-\t run cli demo"
-	echo -e " ${HI}benchmark${NC}\t\t\t-\t run benchmark"
-	echo -e " ${HI}test <core/cli/benchmark>${NC}\t-\t run tests on module"
+	echo -e " ${HI}help${NC}\t\t\t\t show this message"
+	echo -e " ${HI}build${NC}\t\t\t\t build all"
+	echo -e " ${HI}cli${NC}\t\t\t\t run cli demo"
+	echo -e " ${HI}benchmark${NC}\t\t\t run benchmark"
+	echo -e " ${HI}test <core/cli/benchmark>${NC}\t run tests on module"
+	echo -e " ${HI}format${NC}\t\t\t\t format code"
 
 	exit 0
 }
@@ -37,6 +38,9 @@ if [ $1 == "help" ]; then
 	usage_and_exit
 elif [ $1 == "build" ]; then
 	build
+	exit 0
+elif [ $1 == "format" ]; then
+	./code-format.sh
 	exit 0
 fi
 

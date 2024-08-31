@@ -33,6 +33,13 @@ cmake --build build --parallel $(nproc)
 cp -f build/compile_commands.json .
 }
 
+# $1 - path to coverage dir
+coverage() {
+	pushd $1
+	llvm-cov-18 gcov *.gcno
+
+	popd
+}
 
 if [ $1 == "help" ]; then
 	usage_and_exit
@@ -62,7 +69,8 @@ elif [ $1 == "test" ]; then
 	fi
 
 	if [ $2 == "core" ]; then
-		./build/core/test/plut_core_tests
+		test_dir=./build/core/test
+		test_name=plut_core_tests
 	else
 		usage_and_exit
 	fi

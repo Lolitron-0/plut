@@ -13,9 +13,7 @@ usage_and_exit() {
 	echo -e " ${HI}help${NC}\t\t\t\t show this message"
 	echo -e " ${HI}build${NC}\t\t\t\t build all"
 	echo -e " ${HI}cli${NC}\t\t\t\t run cli demo"
-	echo -e " ${HI}benchmark${NC}\t\t\t run benchmark"
-	echo -e " ${HI}test <core/cli/benchmark>${NC}\t run tests on module"
-	echo -e " ${HI}format${NC}\t\t\t\t format code"
+	echo -e " ${HI}benchmark${NC}\t\t\t run benchmark" echo -e " ${HI}test <core/cli/benchmark>${NC}\t run tests on module" echo -e " ${HI}format${NC}\t\t\t\t format code"
 
 	exit 0
 }
@@ -33,6 +31,16 @@ cmake --build build --parallel $(nproc)
 cp -f build/compile_commands.json .
 }
 
+# $1 - test dir 
+# $2 - test name 
+run_test() {
+	pushd $1 > /dev/null
+	LLVM_PROFILE_FILE="$2.profraw" ./$2
+	llvm-profdata-18 merge -sparse $2.profraw -o $2.profdata
+	llvm-cov-18 export ./$2 --instr-profile=$2.profdata --format=lcov > coverage.info
+	popd > /dev/null
+	genhtml $1/coverage.info --branch-coverage --output-directory ./build/coverage_report/$2 > /dev/null
+}
 
 if [ $1 == "help" ]; then
 	usage_and_exit
@@ -62,10 +70,13 @@ elif [ $1 == "test" ]; then
 	fi
 
 	if [ $2 == "core" ]; then
-		./build/core/test/plut_core_tests
+		test_dir=./build/core/test
+		test_name=plut_core_tests
 	else
 		usage_and_exit
 	fi
+
+	run_test $test_dir $test_name
 else
 	usage_and_exit
 fi

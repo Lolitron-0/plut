@@ -36,6 +36,9 @@ TEST(Matrix, IndexOperatorTypes) {
   mat[(unsigned long)0][(long)0];
   mat[(long long)0][(unsigned long long)0];
   mat[(unsigned long long)0][(long long)0];
+
+	const ContiguousDynamicMatrix<int> cmat{5,5};
+	cmat[0][0]; // const
 }
 
 TEST(Matrix, IndexOperator) {

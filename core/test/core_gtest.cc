@@ -37,8 +37,8 @@ TEST(Matrix, IndexOperatorTypes) {
   mat[(long long)0][(unsigned long long)0];
   mat[(unsigned long long)0][(long long)0];
 
-	const ContiguousDynamicMatrix<int> cmat{5,5};
-	cmat[0][0]; // const
+  const ContiguousDynamicMatrix<int> cmat{ 5, 5 };
+  cmat[0][0]; // const
 }
 
 TEST(Matrix, IndexOperator) {
@@ -83,6 +83,21 @@ TEST(Matrix, IndexOperator) {
   EXPECT_EQ(mat[4][4], 24);
 }
 
+TEST(Logger, Methods) {
+  struct TestLogger : LoggerBase {
+    TestLogger()
+        : LoggerBase{ "TEST" } {}
+  };
+
+	EXPECT_NO_THROW(TestLogger().debug("msg {}", 1));
+	EXPECT_NO_THROW(TestLogger().info("msg {}", 2));
+	EXPECT_NO_THROW(TestLogger().warn("msg {}", 3));
+	EXPECT_NO_THROW(TestLogger().error("msg {}", 4));
+	EXPECT_NO_THROW(TestLogger().critical("msg {}", 5));
+	EXPECT_NO_THROW(TestLogger().syserror("msg {}", 6));
+	EXPECT_NO_THROW(TestLogger().syscritical("msg {}", 7));
+}
+
 TEST(Reel, BoundValues) {
   EXPECT_THROW(([] {
                  Reel r{ 10, { Symbol{ '1' }, Symbol{ '2' } } };
@@ -98,6 +113,13 @@ TEST(Reel, BoundValues) {
   EXPECT_NO_THROW(([] {
     Reel r{ 2, { Symbol{ '1' }, Symbol{ '2' } } };
   }()));
+}
+
+TEST(Board, Operators){
+	Board board{5,5};
+	board[0][0];
+	const Board cboard{5,5};
+	cboard[0][0];
 }
 
 TEST(SlotBase, SetSymbols) {

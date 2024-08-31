@@ -17,6 +17,9 @@ auto uniformRandomizeBoardPassImpl(
   };
   for (int i{ 0 }; i < rows; i++) {
     for (int j{ 0 }; j < cols; j++) {
+      if (!slot.board[i][j].isEmpty() || slot.board[i][j].isDisabled()) {
+        continue;
+      }
       auto rnd{ distrib(*randEngineRef) };
       slot.board[i][j] = slot.getSymbols()[rnd];
     }

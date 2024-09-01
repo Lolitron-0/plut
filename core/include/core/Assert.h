@@ -2,8 +2,10 @@
 
 #ifndef NDEBUG
 #define CORE_ASSERT(condition, message)                                  \
-  do {                                                                   \
+  do { /* NOLINT */                                                      \
     if (!(condition)) {                                                  \
+      CoreLogger().critical("Assertion failed at {}:{}, with message:",  \
+                            __FILE__, __LINE__);                         \
       CoreLogger().critical((message));                                  \
       std::abort();                                                      \
     }                                                                    \

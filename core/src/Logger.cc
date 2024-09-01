@@ -3,7 +3,7 @@
 
 namespace plut::core {
 
-bool LoggerBase::s_Muted{ true };
+bool LoggerBase::s_Muted{ false };
 bool LoggerBase::s_Initialized{ false };
 std::vector<spdlog::sink_ptr> LoggerBase::s_Sinks{};
 

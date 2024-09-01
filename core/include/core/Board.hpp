@@ -22,6 +22,7 @@ public:
   }
 
   [[nodiscard]] auto getSize() const -> BoardMatrix::Dimensions;
+  [[nodiscard]] auto inBounds(std::size_t i, std::size_t j) const -> bool;
 
 private:
   BoardMatrix m_CurrentState;

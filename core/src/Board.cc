@@ -11,4 +11,7 @@ auto Board::getSize() const -> BoardMatrix::Dimensions {
   return m_CurrentState.getSize();
 }
 
+auto Board::inBounds(std::size_t i, std::size_t j) const -> bool {
+  return m_CurrentState.inBounds(i, j);
+}
 } // namespace plut::core

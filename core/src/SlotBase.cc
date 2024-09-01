@@ -20,14 +20,23 @@ void SlotBase::setSymbols(const std::vector<Symbol>& symbols) {
   m_Symbols = symbols;
 }
 
+auto SlotBase::getCurrentPayoutBetMultiplier() const -> float {
+  return m_CurrentPayoutBetMultiplier;
+}
+
 void SlotBase::addSymbol(const Symbol& symbol) {
   CORE_ASSERT(std::ranges::find(m_Symbols, symbol) == m_Symbols.end(),
               "Slot contains repeating symbols");
   m_Symbols.push_back(symbol);
 }
 
+void SlotBase::addToPayoutMultiplier(float value) {
+  // TODO: coeff
+  m_CurrentPayoutBetMultiplier += value;
+}
+
 void SlotBase::spin() {
-  board.resetState();
+  _resetState();
 
   _fillBoard();
 
@@ -42,6 +51,9 @@ void SlotBase::spin() {
       auto passResult{ std::invoke(winCollectionPass, *this) };
 
       switch (passResult) {
+      case WinCollectionPassResult::nextPass:
+        break;
+
       case WinCollectionPassResult::endWin:
         goto breakWinCollection;
         break;
@@ -85,6 +97,11 @@ void SlotBase::registerFillPass(const FillPass& newPass) {
 void SlotBase::registerWinCollectionPass(
     const WinCollectionPass& newPass) {
   m_WinCollectionPasses.push_back(newPass);
+}
+
+void SlotBase::_resetState() {
+  board.resetState();
+  m_CurrentPayoutBetMultiplier = 0;
 }
 
 void SlotBase::_fillBoard() {

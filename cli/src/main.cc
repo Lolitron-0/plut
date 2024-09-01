@@ -51,6 +51,7 @@ auto main(int argc, char* argv[]) -> int {
     plut::cli::printUsage();
     return 1;
   }
+
   std::string_view pathToSlotLib{ argv[1] };
   auto slot{ plut::cli::buildCustomSlot(pathToSlotLib) };
 
@@ -63,5 +64,7 @@ auto main(int argc, char* argv[]) -> int {
     }
     std::cout << std::endl;
   }
+
+  std::cout << slot->getCurrentPayoutBetMultiplier() << std::endl;
   return 0;
 }

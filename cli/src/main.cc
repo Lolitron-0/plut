@@ -60,7 +60,11 @@ auto main(int argc, char* argv[]) -> int {
   auto [rows, cols]{ slot->board.getSize() };
   for (int i{ 0 }; i < rows; i++) {
     for (int j{ 0 }; j < cols; j++) {
-      std::cout << slot->board[i][j].getTag() << ' ';
+      if (slot->board[i][j].isDisabled() || slot->board[i][j].isEmpty()) {
+				std::cout << "NO_SYM ";
+        continue;
+      }
+      std::cout << slot->board[i][j].value().getTag() << ' ';
     }
     std::cout << std::endl;
   }

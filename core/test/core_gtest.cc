@@ -17,7 +17,7 @@ auto main(int argc, char** argv) -> int {
 
 const std::vector<Symbol> testSymbols{
   Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' },
-  Symbol{ '4' }, Symbol{ '5' }, Symbol{ '6' },
+  Symbol{ '4' }, Symbol{ '5', 0.2F }, Symbol{ '6', 0.1F },
 };
 
 TEST(Matrix, Types) {
@@ -154,7 +154,7 @@ TEST(FillPassPreset, UniformRandomizeBoard) {
     TestSlot()
         : SlotBase{ 5, 5 } {
       SlotBase::registerFillPass(
-          PassPresets::Fill::Manager::getUniformRandomizeBoardPass());
+          PassPresets::Fill::Manager::getWeightedRandomizeBoardPass());
     }
   };
   TestSlot s;
@@ -166,7 +166,7 @@ TEST(FillPassPreset, UniformRandomizeBoard) {
     for (int j{ 0 }; j < s.board.getSize().columns; j++) {
       bool match{ false };
       for (auto symbol : s.getSymbols()) {
-        if (symbol.getTag() == s.board[i][j].getTag()) {
+        if (symbol.getTag() == s.board[i][j].value().getTag()) {
           match = true;
           break;
         }
@@ -235,7 +235,7 @@ TEST(WinCollectionPassPreset, WinLineStartPoint) {
         : SlotBase{ 5, 5 } {
       SlotBase::setSymbols(testSymbols);
       SlotBase::registerFillPass(
-          PassPresets::Fill::Manager::getUniformRandomizeBoardPass());
+          PassPresets::Fill::Manager::getWeightedRandomizeBoardPass());
       SlotBase::registerWinCollectionPass(
           PassPresets::WinCollection::Manager::getWinLinesPass({
               WinLine{ { 0, 0 }, StepRight * 4, 2 },
@@ -260,7 +260,7 @@ TEST(WinCollectionPassPreset, WinLineNoStartPointFull) {
         : SlotBase{ 5, 5 } {
       SlotBase::setSymbols(testSymbols);
       SlotBase::registerFillPass(
-          PassPresets::Fill::Manager::getUniformRandomizeBoardPass());
+          PassPresets::Fill::Manager::getWeightedRandomizeBoardPass());
       SlotBase::registerWinCollectionPass(
           PassPresets::WinCollection::Manager::getWinLinesPass({
               WinLine{ StepDown * 4, 5 },

@@ -9,7 +9,9 @@ set(SOURCES
     src/Reel.cc
     src/Board.cc
     src/PassPresets.cc
-    src/WinLine.cc)
+    src/WinLine.cc
+		src/Cell.cc
+	)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 

@@ -11,7 +11,7 @@ namespace Fill {
 
 class Manager {
 public:
-  static auto getUniformRandomizeBoardPass() -> FillPass;
+  static auto getWeightedRandomizeBoardPass() -> FillPass;
 };
 
 } // namespace Fill

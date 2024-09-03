@@ -6,7 +6,7 @@ constexpr int slotCols{ 5 };
 MySlot::MySlot()
     : pc::SlotBase{ slotRows, slotCols } {
   pc::SlotBase::registerFillPass(
-      pc::PassPresets::Fill::Manager::getUniformRandomizeBoardPass());
+      pc::PassPresets::Fill::Manager::getWeightedRandomizeBoardPass());
 
   using namespace pc::WinLineShapePresets;
   std::vector<pc::WinLine> winLines{
@@ -29,12 +29,12 @@ MySlot::MySlot()
   pc::SlotBase::registerWinCollectionPass(
       pc::PassPresets::WinCollection::Manager::getWinLinesPass(winLines));
 
-  pc::Symbol symK{ 'K' };
+  pc::Symbol symK{ 'K', 0.3 };
   pc::Symbol symQ{ 'Q' };
   pc::Symbol symJ{ 'J' };
-  pc::Symbol symA{ 'A' };
-  pc::Symbol symW{ 'W' };
-  pc::Symbol symB{ 'B' };
+  pc::Symbol symA{ 'A', 0.2 };
+  pc::Symbol symW{ 'W', 0.1 };
+  pc::Symbol symB{ 'B', 0.1 };
   pc::SlotBase::setSymbols({ symK, symQ, symJ, symA, symW, symB });
 }
 

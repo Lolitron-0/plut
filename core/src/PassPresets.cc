@@ -6,28 +6,38 @@ namespace plut::core::PassPresets {
 
 namespace Fill {
 
-auto uniformRandomizeBoardPassImpl(
+auto weightedRandomizeBoardPassImpl(
     SlotBase& slot, const RandEngineRef& randEngineRef) -> void {
   CORE_ASSERT(slot.getSymbols().size() > 0,
               "No symbols to generate from");
 
   auto [rows, cols]{ slot.board.getSize() };
-  std::uniform_int_distribution<std::size_t> distrib{
-    0, slot.getSymbols().size() - 1
-  };
+  float weightSum{ 0 };
+  for (const auto& symbol : slot.getSymbols()) {
+    weightSum += symbol.getProbability();
+  }
   for (int i{ 0 }; i < rows; i++) {
     for (int j{ 0 }; j < cols; j++) {
-      if (!slot.board[i][j].isEmpty() || slot.board[i][j].isDisabled()) {
+      if (!slot.board[i][j].shouldFill()) {
         continue;
       }
-      auto rnd{ distrib(*randEngineRef) };
-      slot.board[i][j] = slot.getSymbols()[rnd];
+
+      std::uniform_real_distribution<float> distrib{ 0, weightSum };
+      float targetWeight{ distrib(*randEngineRef) };
+
+      for (const auto& symbol : slot.getSymbols()) {
+        if (targetWeight < symbol.getProbability()) {
+          slot.board[i][j].setContent(symbol);
+          break;
+        }
+        targetWeight -= symbol.getProbability();
+      }
     }
   }
 }
 
-auto Manager::getUniformRandomizeBoardPass() -> FillPass {
-  return uniformRandomizeBoardPassImpl;
+auto Manager::getWeightedRandomizeBoardPass() -> FillPass {
+  return weightedRandomizeBoardPassImpl;
 }
 
 } // namespace Fill
@@ -54,13 +64,14 @@ static auto winLinesInBounds(
 
 static auto countLineFrom(SlotBase& slot, const WinLine& winLine, int i,
                           int j) -> int {
-  auto lineSymbol{ slot.board[i][j] };
+  auto lineSymbol{ slot.board[i][j].value() };
   int counter{ 1 };
 
   for (const auto& edge : winLine.path.edges) {
     i += edge.i;
     j += edge.j;
-    if (slot.board.inBounds(i, j) && slot.board[i][j] == lineSymbol) {
+    if (slot.board.inBounds(i, j) &&
+        slot.board[i][j].value() == lineSymbol) {
       counter++;
     } else {
       return counter;

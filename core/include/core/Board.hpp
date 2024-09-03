@@ -1,12 +1,12 @@
 #pragma once
-#include "Symbol.hpp"
+#include "core/Cell.hpp"
 #include "core/ContiguousMatrix.hpp"
 
 namespace plut::core {
 
 class Board {
 public:
-  using BoardMatrix = ContiguousDynamicMatrix<Symbol>;
+  using BoardMatrix = ContiguousDynamicMatrix<Cell>;
 
   Board(std::size_t maxRows, std::size_t maxCols);
 

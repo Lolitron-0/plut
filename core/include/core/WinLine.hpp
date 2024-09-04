@@ -12,11 +12,6 @@ struct Offset2D {
       : i{ i },
         j{ j } {}
 
-  /* implicit */ constexpr operator std::pair<int, int>() const // NOLINT
-  {
-    return std::make_pair(i, j);
-  }
-
   int i{};
   int j{};
 };

@@ -1,37 +1,23 @@
 #include "core/PassPresets.hpp"
 #include "core/Assert.h"
 #include "core/SlotBase.hpp"
+#include "core/SymbolManager.hpp"
 
 namespace plut::core::PassPresets {
 
 namespace Fill {
 
-auto weightedRandomizeBoardPassImpl(
-    SlotBase& slot, const RandEngineRef& randEngineRef) -> void {
-  CORE_ASSERT(slot.getSymbols().size() > 0,
-              "No symbols to generate from");
+auto weightedRandomizeBoardPassImpl(SlotBase& slot) -> void {
 
   auto [rows, cols]{ slot.board.getSize() };
-  float weightSum{ 0 };
-  for (const auto& symbol : slot.getSymbols()) {
-    weightSum += symbol.getProbability();
-  }
   for (int i{ 0 }; i < rows; i++) {
     for (int j{ 0 }; j < cols; j++) {
       if (!slot.board[i][j].shouldFill()) {
         continue;
       }
 
-      std::uniform_real_distribution<float> distrib{ 0, weightSum };
-      float targetWeight{ distrib(*randEngineRef) };
-
-      for (const auto& symbol : slot.getSymbols()) {
-        if (targetWeight < symbol.getProbability()) {
-          slot.board[i][j].setContent(symbol);
-          break;
-        }
-        targetWeight -= symbol.getProbability();
-      }
+      slot.board[i][j].setContent(
+          slot.getSymbolManager()->selectRandomSymbol());
     }
   }
 }

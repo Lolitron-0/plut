@@ -16,7 +16,7 @@ auto main(int argc, char** argv) -> int {
 }
 
 const std::vector<Symbol> testSymbols{
-  Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' },
+  Symbol{ '1' }, Symbol{ '2' },       Symbol{ '3' },
   Symbol{ '4' }, Symbol{ '5', 0.2F }, Symbol{ '6', 0.1F },
 };
 
@@ -132,21 +132,43 @@ TEST(Board, Operators) {
   cboard[0][0];
 }
 
-TEST(SlotBase, SetSymbols) {
+TEST(SymbolManager, Assertions) {
   SlotBase sb{ 5, 5 };
-  ;
-  EXPECT_NO_FATAL_FAILURE(
-      sb.setSymbols({ Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' } }));
-  EXPECT_DEBUG_DEATH(
-      sb.setSymbols({ Symbol{ '1' }, Symbol{ '1' }, Symbol{ '3' } }),
-      ".*");
-}
 
-TEST(SlotBase, AddSymbol) {
-  SlotBase sb{ 5, 5 };
-  sb.setSymbols({ Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' } });
-  EXPECT_NO_FATAL_FAILURE(sb.addSymbol(Symbol{ '4' }));
-  EXPECT_DEBUG_DEATH(sb.addSymbol(Symbol{ '1' }), ".*");
+  // set current set
+  EXPECT_NO_FATAL_FAILURE(sb.getSymbolManager()->setCurrentSetSymbols(
+      { Symbol{ '1' }, Symbol{ '2' }, Symbol{ '3' } }));
+  EXPECT_DEBUG_DEATH(sb.getSymbolManager()->setCurrentSetSymbols(
+                         { Symbol{ '1' }, Symbol{ '1' }, Symbol{ '3' } }),
+                     ".*");
+
+  // add to current set
+  EXPECT_NO_FATAL_FAILURE(
+      sb.getSymbolManager()->addSymbolToCurrentSet(Symbol{ '4' }));
+  EXPECT_DEBUG_DEATH(
+      sb.getSymbolManager()->addSymbolToCurrentSet(Symbol{ '1' }), ".*");
+
+  // add set
+  EXPECT_NO_FATAL_FAILURE(
+      sb.getSymbolManager()->addSymbolSet("new1", { Symbol{ '1' } }));
+  EXPECT_DEBUG_DEATH(sb.getSymbolManager()->addSymbolSet(
+                         "new2", { Symbol{ '1' }, Symbol{ '1' } }),
+                     ".*");
+  EXPECT_DEBUG_DEATH(
+      sb.getSymbolManager()->addSymbolSet("default", { Symbol{ '1' } }),
+      ".*");
+
+  // switch set
+  EXPECT_NO_FATAL_FAILURE(
+      sb.getSymbolManager()->switchCurrentSymbolSet("new1"));
+  EXPECT_DEATH(
+      sb.getSymbolManager()->switchCurrentSymbolSet("nonexistent"), ".*");
+
+  // remove set
+  EXPECT_NO_FATAL_FAILURE(
+      sb.getSymbolManager()->removeSymbolSet("default"));
+  EXPECT_DEBUG_DEATH(sb.getSymbolManager()->removeSymbolSet("default"),
+                     ".*");
 }
 
 TEST(FillPassPreset, UniformRandomizeBoard) {
@@ -158,14 +180,14 @@ TEST(FillPassPreset, UniformRandomizeBoard) {
     }
   };
   TestSlot s;
-  s.setSymbols(testSymbols);
+  s.getSymbolManager()->setCurrentSetSymbols(testSymbols);
 
   s.spin();
 
   for (int i{ 0 }; i < s.board.getSize().rows; i++) {
     for (int j{ 0 }; j < s.board.getSize().columns; j++) {
       bool match{ false };
-      for (auto symbol : s.getSymbols()) {
+      for (auto symbol : s.getSymbolManager()->getCurrentSetSymbols()) {
         if (symbol.getTag() == s.board[i][j].value().getTag()) {
           match = true;
           break;
@@ -233,7 +255,7 @@ TEST(WinCollectionPassPreset, WinLineStartPoint) {
   struct TestSlot : SlotBase {
     TestSlot()
         : SlotBase{ 5, 5 } {
-      SlotBase::setSymbols(testSymbols);
+      SlotBase::getSymbolManager()->setCurrentSetSymbols(testSymbols);
       SlotBase::registerFillPass(
           PassPresets::Fill::Manager::getWeightedRandomizeBoardPass());
       SlotBase::registerWinCollectionPass(
@@ -258,7 +280,7 @@ TEST(WinCollectionPassPreset, WinLineNoStartPointFull) {
   struct TestSlot : SlotBase {
     TestSlot()
         : SlotBase{ 5, 5 } {
-      SlotBase::setSymbols(testSymbols);
+      SlotBase::getSymbolManager()->setCurrentSetSymbols(testSymbols);
       SlotBase::registerFillPass(
           PassPresets::Fill::Manager::getWeightedRandomizeBoardPass());
       SlotBase::registerWinCollectionPass(

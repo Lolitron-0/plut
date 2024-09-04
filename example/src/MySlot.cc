@@ -35,7 +35,8 @@ MySlot::MySlot()
   pc::Symbol symA{ 'A', 0.2 };
   pc::Symbol symW{ 'W', 0.1 };
   pc::Symbol symB{ 'B', 0.1 };
-  pc::SlotBase::setSymbols({ symK, symQ, symJ, symA, symW, symB });
+  pc::SlotBase::getSymbolManager()->setCurrentSetSymbols(
+      { symK, symQ, symJ, symA, symW, symB });
 }
 
 DEFINE_SLOT_BUILDER(MySlot)

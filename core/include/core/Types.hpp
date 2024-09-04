@@ -6,6 +6,7 @@
 namespace plut::core {
 
 class SlotBase;
+class SymbolManager;
 
 // TODO: event driven
 
@@ -19,10 +20,12 @@ enum class WinCollectionPassResult {
   numResults
 };
 
-using RandEngineRef = std::shared_ptr<std::mt19937_64>;
-using FillPass = std::function<void(SlotBase&, const RandEngineRef&)>;
+using FillPass = std::function<void(SlotBase&)>;
 using WinCollectionPass =
     std::function<WinCollectionPassResult(SlotBase&)>;
-using TraversalPath = std::vector<std::pair<int, int>>;
+
+using RandEngineRef    = std::shared_ptr<std::mt19937_64>;
+using TraversalPath    = std::vector<std::pair<int, int>>;
+using SymbolManagerRef = std::shared_ptr<SymbolManager>;
 
 } // namespace plut::core

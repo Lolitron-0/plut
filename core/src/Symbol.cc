@@ -8,7 +8,7 @@ Symbol::Symbol(char tag)
 
 Symbol::Symbol(char tag, float probabilityWeight)
     : m_Tag{ tag },
-      m_Probability{ probabilityWeight } {
+      m_Weight{ probabilityWeight } {
   CORE_ASSERT(probabilityWeight >= 0.F && probabilityWeight <= 1.F,
               "Probability must be in [0;1] range");
 }
@@ -23,8 +23,8 @@ auto Symbol::operator<(const Symbol& symbol) const -> bool {
 
 auto Symbol::getTag() const -> char { return m_Tag; }
 
-auto Symbol::getProbability() const -> float {
-  return m_Probability;
+auto Symbol::getWeight() const -> float {
+  return m_Weight;
 }
 
 } // namespace plut::core

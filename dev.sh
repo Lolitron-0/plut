@@ -38,8 +38,11 @@ run_test() {
 	LLVM_PROFILE_FILE="$2.profraw" ./$2
 	llvm-profdata-18 merge -sparse $2.profraw -o $2.profdata
 	llvm-cov-18 export ./$2 --instr-profile=$2.profdata --format=lcov > coverage.info
+	lcov --remove coverage.info -o coverage_filtered.info \
+		'*spdlog*' \
+		'*build/*' > /dev/null
 	popd > /dev/null
-	genhtml $1/coverage.info --branch-coverage --output-directory ./build/coverage_report/$2 > /dev/null
+	genhtml $1/coverage_filtered.info --branch-coverage --output-directory ./build/coverage_report/$2 > /dev/null
 }
 
 if [ $1 == "help" ]; then

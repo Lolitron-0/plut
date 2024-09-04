@@ -11,6 +11,7 @@ set(SOURCES
     src/PassPresets.cc
     src/WinLine.cc
 		src/Cell.cc
+		src/SymbolManager.cc
 	)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})

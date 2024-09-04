@@ -1,5 +1,4 @@
 #pragma once
-#include <optional>
 
 namespace plut::core {
 
@@ -10,14 +9,14 @@ public:
   Symbol(char tag, float probabilityWeight);
 
   [[nodiscard]] auto getTag() const -> char;
-  [[nodiscard]] auto getProbability() const -> float;
+  [[nodiscard]] auto getWeight() const -> float;
 
   [[nodiscard]] auto operator==(const Symbol& symbol) const -> bool;
   [[nodiscard]] auto operator<(const Symbol& symbol) const -> bool;
 
 private:
   char m_Tag{ ' ' };
-  float m_Probability{ 0.5F };
+  float m_Weight{ 0.5F };
   bool m_Empty{ true };
   bool m_Disabled{ false };
 };

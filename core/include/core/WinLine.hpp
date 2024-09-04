@@ -21,7 +21,7 @@ struct Offset2D {
   int j{};
 };
 struct WinLinePath {
-  /* implicit */ constexpr WinLinePath( // NOLINT
+  /* implicit */ WinLinePath( // NOLINT
       std::initializer_list<Offset2D> path) noexcept
       : edges{ path } {}
   /* implicit */ WinLinePath( // NOLINT
@@ -31,16 +31,11 @@ struct WinLinePath {
   std::vector<Offset2D> edges;
 };
 
-constexpr auto operator+(const WinLinePath& a,
-                         const WinLinePath& b) noexcept -> WinLinePath {
-  std::vector<Offset2D> res{ a.edges.size() + b.edges.size() };
-  std::copy(a.edges.begin(), a.edges.end(), res.begin());
-  std::copy(b.edges.begin(), b.edges.end(), res.begin() + a.edges.size());
-  return { res };
-}
+auto operator+(const WinLinePath& a,
+               const WinLinePath& b) noexcept -> WinLinePath;
 
 template <std::integral T>
-constexpr auto operator*(const WinLinePath& a,
+auto operator*(const WinLinePath& a,
                          T mul) noexcept -> WinLinePath {
   CORE_ASSERT(mul > 0, "Factor must be positive");
   std::vector<Offset2D> res{ a.edges.size() * mul };
@@ -51,7 +46,7 @@ constexpr auto operator*(const WinLinePath& a,
   return { res };
 }
 template <std::integral T>
-constexpr auto operator*(T mul,
+auto operator*(T mul,
                          const WinLinePath& a) noexcept -> WinLinePath {
   return a * mul;
 }

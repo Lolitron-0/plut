@@ -13,6 +13,14 @@ WinLine::WinLine(WinLinePath path, std::size_t minSymbols)
     : path{ std::move(path) },
       minSymbols{ minSymbols } {}
 
+auto operator+(const WinLinePath& a,
+               const WinLinePath& b) noexcept -> WinLinePath {
+  std::vector<Offset2D> res{ a.edges.size() + b.edges.size() };
+  std::copy(a.edges.begin(), a.edges.end(), res.begin());
+  std::copy(b.edges.begin(), b.edges.end(), res.begin() + a.edges.size());
+  return { res };
+}
+
 namespace WinLineShapePresets {
 
 const WinLinePath VShape({ Offset2D{ 1, 1 }, { -1, 1 } });

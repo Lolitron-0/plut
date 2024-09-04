@@ -59,6 +59,7 @@ fi
 build
 
 example_to_launch="./build/example/libplut_example.so"
+export LLVM_PROFILE_FILE="./build/default.profraw"
 
 if [ $1 == "cli" ]; then
 	./build/cli/plut_cli $example_to_launch

@@ -1,12 +1,12 @@
 #pragma once
-#include "Symbol.hpp"
+#include "core/Cell.hpp"
 #include "core/ContiguousMatrix.hpp"
 
 namespace plut::core {
 
 class Board {
 public:
-  using BoardMatrix = ContiguousDynamicMatrix<Symbol>;
+  using BoardMatrix = ContiguousDynamicMatrix<Cell>;
 
   Board(std::size_t maxRows, std::size_t maxCols);
 
@@ -22,6 +22,7 @@ public:
   }
 
   [[nodiscard]] auto getSize() const -> BoardMatrix::Dimensions;
+  [[nodiscard]] auto inBounds(std::size_t i, std::size_t j) const -> bool;
 
 private:
   BoardMatrix m_CurrentState;

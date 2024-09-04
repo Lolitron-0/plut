@@ -9,16 +9,18 @@ namespace plut::core {
 
 class SlotBase {
 public:
-  using FillPassBuffer    = std::vector<FillPass>;
+  using FillPassBuffer          = std::vector<FillPass>;
   using WinCollectionPassBuffer = std::vector<WinCollectionPass>;
 
   SlotBase(std::size_t maxRows, std::size_t maxCols);
 
   [[nodiscard]] auto getSymbols() const -> std::vector<Symbol>;
   [[nodiscard]] auto getTraversalPath() const -> TraversalPath;
+  [[nodiscard]] auto getCurrentPayoutBetMultiplier() const -> float;
   void setTraversalPath(const TraversalPath& traversalPath);
   void setSymbols(const std::vector<Symbol>& symbols);
   void addSymbol(const Symbol& symbol);
+  void addToPayoutMultiplier(float value);
 
   void spin();
 
@@ -29,11 +31,9 @@ protected:
   void registerFillPass(const FillPass& newPass);
   void registerWinCollectionPass(const WinCollectionPass& newPass);
 
+
 private:
-  [[nodiscard]] auto symbolsUniqueSet(
-      const std::vector<Symbol>& symbols) const -> bool;
-  [[nodiscard]] auto symbolsUniqueAdd(const Symbol& symbol) const
-      -> bool;
+  void _resetState();
   void _fillBoard();
 
 private:
@@ -42,6 +42,8 @@ private:
   FillPassBuffer m_FillPasses;
   WinCollectionPassBuffer m_WinCollectionPasses;
   TraversalPath m_TraversalPath;
+
+  float m_CurrentPayoutBetMultiplier{ 0 };
 };
 
 } // namespace plut::core

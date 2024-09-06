@@ -99,6 +99,7 @@ TEST(Logger, Methods) {
         : LoggerBase{ "TEST" } {}
   };
 
+  EXPECT_NO_THROW(TestLogger().trace("msg {}", 0));
   EXPECT_NO_THROW(TestLogger().debug("msg {}", 1));
   EXPECT_NO_THROW(TestLogger().info("msg {}", 2));
   EXPECT_NO_THROW(TestLogger().warn("msg {}", 3));

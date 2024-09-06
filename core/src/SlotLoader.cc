@@ -1,7 +1,7 @@
 #include "core/SlotLoader.hpp"
-#include "core/SlotBase.hpp"
 #include "core/Logger.hpp"
 #include "core/Macros.hpp"
+#include "core/SlotBase.hpp"
 #include <dlfcn.h>
 #include <functional>
 

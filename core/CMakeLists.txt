@@ -29,6 +29,8 @@ endif()
 
 add_subdirectory(thirdparty/spdlog)
 target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
+add_subdirectory(thirdparty/cxxopts)
+target_link_libraries(${PROJECT_NAME} PUBLIC cxxopts)
 
 if(PLUT_BUILD_TESTS)
   add_subdirectory(test)

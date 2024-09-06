@@ -15,7 +15,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_link_options(-fprofile-instr-generate -fcoverage-mapping)
 endif()
 
-
 add_subdirectory(core)
 add_subdirectory(benchmark)
 add_subdirectory(cli)

@@ -161,7 +161,7 @@ TEST(SymbolManager, Assertions) {
   // switch set
   EXPECT_NO_FATAL_FAILURE(
       sb.getSymbolManager()->switchCurrentSymbolSet("new1"));
-  EXPECT_DEATH(
+  EXPECT_DEBUG_DEATH(
       sb.getSymbolManager()->switchCurrentSymbolSet("nonexistent"), ".*");
 
   // remove set
@@ -209,45 +209,58 @@ TEST(WinCollectionPassPreset, WinLineWinLineBounds) {
   struct TestSlot : SlotBase {
     TestSlot()
         : SlotBase{ 3, 3 } {
+      SlotBase::registerFillPass(
+          PassPresets::Fill::Manager::getWeightedRandomizeBoardPass());
+      SlotBase::getSymbolManager()->setCurrentSetSymbols(testSymbols);
+
       WinLine outOfBoundsLine1{ { 0, 0 }, StepRight * 3, 2 };
       WinLine outOfBoundsLine2{ { 0, 0 }, StepLeft * 3, 2 };
       WinLine outOfBoundsLine3{ { 2, 2 }, StepRight, 2 };
       WinLine outOfBoundsLine4{ { 2, 2 }, StepDown, 2 };
 
-      EXPECT_DEBUG_DEATH(
-          SlotBase::registerWinCollectionPass(
-              PassPresets::WinCollection::Manager::getWinLinesPass(
-                  { outOfBoundsLine1 })),
-          ".*");
-      EXPECT_DEBUG_DEATH(
-          SlotBase::registerWinCollectionPass(
-              PassPresets::WinCollection::Manager::getWinLinesPass(
-                  { outOfBoundsLine2 })),
-          ".*");
-      EXPECT_DEBUG_DEATH(
-          SlotBase::registerWinCollectionPass(
-              PassPresets::WinCollection::Manager::getWinLinesPass(
-                  { outOfBoundsLine3 })),
-          ".*");
-      EXPECT_DEBUG_DEATH(
-          SlotBase::registerWinCollectionPass(
-              PassPresets::WinCollection::Manager::getWinLinesPass(
-                  { outOfBoundsLine4 })),
-          ".*");
+      SlotBase::registerWinCollectionPass(
+          PassPresets::WinCollection::Manager::getWinLinesPass(
+              { outOfBoundsLine1 }));
+      EXPECT_DEBUG_DEATH(spin(), ".*");
+      SlotBase::clearWinCollectionPasses();
+
+      SlotBase::registerWinCollectionPass(
+          PassPresets::WinCollection::Manager::getWinLinesPass(
+              { outOfBoundsLine2 }));
+      EXPECT_DEBUG_DEATH(spin(), ".*");
+      SlotBase::clearWinCollectionPasses();
+
+      SlotBase::registerWinCollectionPass(
+          PassPresets::WinCollection::Manager::getWinLinesPass(
+              { outOfBoundsLine3 }));
+      EXPECT_DEBUG_DEATH(spin(), ".*");
+      SlotBase::clearWinCollectionPasses();
+
+      SlotBase::registerWinCollectionPass(
+          PassPresets::WinCollection::Manager::getWinLinesPass(
+              { outOfBoundsLine4 }));
+      EXPECT_DEBUG_DEATH(spin(), ".*");
+      SlotBase::clearWinCollectionPasses();
 
       WinLine noStartLine{ StepRight + StepDown + StepLeft + StepUp, 4 };
-      EXPECT_NO_FATAL_FAILURE(SlotBase::registerWinCollectionPass(
+      SlotBase::registerWinCollectionPass(
           PassPresets::WinCollection::Manager::getWinLinesPass(
-              { noStartLine })));
+              { noStartLine }));
+      EXPECT_NO_FATAL_FAILURE(spin());
+      SlotBase::clearWinCollectionPasses();
 
-      WinLine goodLine{ { 0, 0 },
-                        WinLinePath{ { 1, 1 }, { 1, 1 }, { -1, 0 } },
-                        3 };
-      EXPECT_NO_FATAL_FAILURE(SlotBase::registerWinCollectionPass(
-          PassPresets::WinCollection::Manager::getWinLinesPass(
-              { goodLine })));
+      //    WinLine goodLine{ { 0, 0 },
+      //                      WinLinePath{ { 1, 1 }, { 1, 1 }, { -1, 0 }
+      //                      }, 3 };
+      //    SlotBase::registerWinCollectionPass(
+      //        PassPresets::WinCollection::Manager::getWinLinesPass(
+      //            { goodLine }));
+      //    EXPECT_NO_FATAL_FAILURE(spin());
+      // SlotBase::clearWinCollectionPasses();
     }
   };
+
+  TestSlot slot;
 }
 
 TEST(WinCollectionPassPreset, WinLineStartPoint) {

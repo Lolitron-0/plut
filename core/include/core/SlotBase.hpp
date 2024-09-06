@@ -23,16 +23,17 @@ public:
   Board board;
 
 protected:
+  void clearFillPasses();
+  void clearWinCollectionPasses();
   void registerFillPass(const FillPass& newPass);
   void registerWinCollectionPass(const WinCollectionPass& newPass);
-
 
 private:
   void _resetState();
   void _fillBoard();
 
 private:
-	SymbolManagerRef m_SymbolManager;
+  SymbolManagerRef m_SymbolManager;
   FillPassBuffer m_FillPasses;
   WinCollectionPassBuffer m_WinCollectionPasses;
   TraversalPath m_TraversalPath;

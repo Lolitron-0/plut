@@ -70,7 +70,7 @@ static auto winLinePassImpl(SlotBase& slot,
                             const std::vector<WinLine>& winLines)
     -> WinCollectionPassResult {
   CORE_ASSERT(winLinesInBounds(slot, winLines),
-              "WinLine goes out of bounds");
+              "Some winLines go out of bounds");
 
   auto [rows, cols]{ slot.board.getSize() };
   for (const auto& winLine : winLines) {

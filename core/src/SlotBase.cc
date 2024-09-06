@@ -73,6 +73,12 @@ void SlotBase::spin() {
   }
 }
 
+void SlotBase::clearFillPasses() { m_FillPasses.clear(); }
+
+void SlotBase::clearWinCollectionPasses() {
+  m_WinCollectionPasses.clear();
+}
+
 void SlotBase::registerFillPass(const FillPass& newPass) {
   m_FillPasses.push_back(newPass);
 }

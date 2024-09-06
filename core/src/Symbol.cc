@@ -23,8 +23,6 @@ auto Symbol::operator<(const Symbol& symbol) const -> bool {
 
 auto Symbol::getTag() const -> char { return m_Tag; }
 
-auto Symbol::getWeight() const -> float {
-  return m_Weight;
-}
+auto Symbol::getWeight() const -> float { return m_Weight; }
 
 } // namespace plut::core

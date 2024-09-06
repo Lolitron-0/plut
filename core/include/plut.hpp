@@ -5,3 +5,4 @@
 #include "core/PassPresets.hpp"
 #include "core/Macros.hpp"
 #include "core/SymbolManager.hpp"
+#include "core/SlotLoader.hpp"

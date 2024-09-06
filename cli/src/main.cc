@@ -12,35 +12,6 @@ void printUsage() {
   std::cout << " plut_cli <path/to/slot.so>" << std::endl;
 }
 
-auto loadCustomSlotBuilderFn(std::string_view pathToLib)
-    -> std::function<core::SlotBase*(void)> {
-  void* handle{ dlopen(pathToLib.data(), RTLD_LAZY) };
-  if (!handle) {
-    CliLogger().syscritical("Could not open slot shared library: {}",
-                            pathToLib);
-    std::exit(1); // NOLINT (one thread)
-  }
-
-  core::SlotBase* (*buildFunc)(){ nullptr };
-  buildFunc = reinterpret_cast<core::SlotBase* (*)()>(
-      dlsym(handle, BUILD_SLOT_FUNC_NAME_STR));
-  if (!buildFunc) {
-    CliLogger().syscritical("Could not load builder symbol (did you "
-                            "forget to add DEFINE_SLOT_BUILDER?): {}",
-                            pathToLib);
-    std::exit(1); // NOLINT (one thread)
-  }
-
-  return buildFunc;
-}
-
-auto buildCustomSlot(std::string_view pathToSlotLib)
-    -> std::unique_ptr<core::SlotBase> {
-  auto buildFn{ loadCustomSlotBuilderFn(pathToSlotLib) };
-
-  return std::unique_ptr<core::SlotBase>(std::invoke(buildFn));
-}
-
 } // namespace plut::cli
 
 auto main(int argc, char* argv[]) -> int {
@@ -53,7 +24,7 @@ auto main(int argc, char* argv[]) -> int {
   }
 
   std::string_view pathToSlotLib{ argv[1] };
-  auto slot{ plut::cli::buildCustomSlot(pathToSlotLib) };
+  auto slot{ plut::core::SlotLoader::buildCustomSlot(pathToSlotLib) };
 
   slot->spin();
 
@@ -61,7 +32,7 @@ auto main(int argc, char* argv[]) -> int {
   for (int i{ 0 }; i < rows; i++) {
     for (int j{ 0 }; j < cols; j++) {
       if (slot->board[i][j].isDisabled() || slot->board[i][j].isEmpty()) {
-				std::cout << "NO_SYM ";
+        std::cout << "NO_SYM ";
         continue;
       }
       std::cout << slot->board[i][j].value().getTag() << ' ';

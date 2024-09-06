@@ -13,7 +13,9 @@ usage_and_exit() {
 	echo -e " ${HI}help${NC}\t\t\t\t show this message"
 	echo -e " ${HI}build${NC}\t\t\t\t build all"
 	echo -e " ${HI}cli${NC}\t\t\t\t run cli demo"
-	echo -e " ${HI}benchmark${NC}\t\t\t run benchmark" echo -e " ${HI}test <core/cli/benchmark>${NC}\t run tests on module" echo -e " ${HI}format${NC}\t\t\t\t format code"
+	echo -e " ${HI}benchmark${NC}\t\t\t run benchmark" 
+	echo -e " ${HI}test <core/cli/benchmark>${NC}\t run tests on module" 
+	echo -e " ${HI}format${NC}\t\t\t\t format code"
 
 	exit 0
 }

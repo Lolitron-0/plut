@@ -8,6 +8,10 @@ public:
   virtual ~LoggerBase() = default;
 
   template <typename... Args>
+  void trace(spdlog::format_string_t<Args...> msg, Args&&... args) {
+    m_Handle->trace(std::move(msg), std::forward<Args>(args)...);
+  }
+  template <typename... Args>
   void debug(spdlog::format_string_t<Args...> msg, Args&&... args) {
     m_Handle->debug(std::move(msg), std::forward<Args>(args)...);
   }

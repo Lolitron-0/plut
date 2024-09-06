@@ -29,6 +29,10 @@ public:
   };
 
   [[nodiscard]] auto getSize() const -> Dimensions { return m_Size; }
+  [[nodiscard]] auto inBounds(std::size_t i,
+                              std::size_t j) const -> bool {
+    return (i >= 0 && j >= 0 && i < m_Size.rows && j < m_Size.columns);
+  }
 
   auto begin() { return m_Data.begin(); }
   auto end() { return m_Data.end(); }
@@ -67,7 +71,8 @@ public:
     }
 
   private:
-    constexpr RowProxy(const ContiguousDynamicMatrix<T>& parent, std::size_t i)
+    constexpr RowProxy(const ContiguousDynamicMatrix<T>& parent,
+                       std::size_t i)
         : parent{ parent },
           i{ i } {}
 
@@ -77,7 +82,8 @@ public:
   };
 
   template <IndexType U>
-  constexpr auto operator[](U i) -> RowProxy<ContiguousDynamicMatrix<T>&> {
+  constexpr auto operator[](U i)
+      -> RowProxy<ContiguousDynamicMatrix<T>&> {
     return { *this, static_cast<std::size_t>(i) };
   }
 

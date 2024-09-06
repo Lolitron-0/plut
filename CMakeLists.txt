@@ -10,6 +10,11 @@ add_compile_options("-Wall")
 set(PLUT_BUILD_TESTS ON)
 set(PLUT_BUILD_EXAMPLES ON)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
+	add_link_options(-fprofile-instr-generate -fcoverage-mapping)
+endif()
+
 add_subdirectory(core)
 add_subdirectory(benchmark)
 add_subdirectory(cli)

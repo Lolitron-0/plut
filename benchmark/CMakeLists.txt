@@ -1,6 +1,10 @@
 project(${CMAKE_PROJECT_NAME}_benchmark)
 
-set(SOURCES src/main.cc)
+set(SOURCES 
+	src/main.cc
+	src/Measurer.cc
+	src/BenchmarkLogger.cc
+)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 

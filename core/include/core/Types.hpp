@@ -1,28 +1,31 @@
 #pragma once
-#include "core/Board.hpp"
 #include <functional>
 #include <memory>
 #include <random>
 
-
 namespace plut::core {
 
 class SlotBase;
+class SymbolManager;
 
 // TODO: event driven
 
 // TODO: maybe add states
-enum WinCollectionPassResult {
-  endWin = 0,
-  fillBoardInstantly = 1,
-  fillBoardAfterPass = 2,
-  respin = 3
+enum class WinCollectionPassResult {
+  nextPass = 0,
+  endWin,
+  fillBoardInstantly,
+  fillBoardAfterPass,
+  respin,
+  numResults
 };
 
-using RandEngineRef = std::shared_ptr<std::mt19937_64>;
-using FillPass =
-    std::function<void(SlotBase&, const RandEngineRef&)>;
-using WinCollectionPass = std::function<WinCollectionPassResult(SlotBase&)>;
-using TraversalPath = std::vector<std::pair<int, int>>;
+using FillPass = std::function<void(SlotBase&)>;
+using WinCollectionPass =
+    std::function<WinCollectionPassResult(SlotBase&)>;
+
+using RandEngineRef    = std::shared_ptr<std::mt19937_64>;
+using TraversalPath    = std::vector<std::pair<int, int>>;
+using SymbolManagerRef = std::shared_ptr<SymbolManager>;
 
 } // namespace plut::core

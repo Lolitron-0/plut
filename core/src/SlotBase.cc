@@ -1,33 +1,24 @@
 #include "core/SlotBase.hpp"
 #include "core/Assert.h"
-#include "core/Symbol.hpp"
-#include <algorithm>
+#include "core/SymbolManager.hpp"
 #include <list>
-#include <set>
 
 namespace plut::core {
 
 SlotBase::SlotBase(std::size_t maxRows, std::size_t maxCols)
-    : board{ maxRows, maxCols } {
-  std::random_device rd;
-  m_RandEngine = std::make_shared<std::mt19937_64>(rd());
+    : board{ maxRows, maxCols },
+      m_SymbolManager{ std::make_shared<SymbolManager>() } {}
+
+auto SlotBase::getCurrentPayoutBetMultiplier() const -> float {
+  return m_CurrentPayoutBetMultiplier;
 }
 
-void SlotBase::setSymbols(const std::vector<Symbol>& symbols) {
-  CORE_ASSERT(std::set(symbols.begin(), symbols.end()).size() ==
-                  symbols.size(),
-              "Slot contains repeating symbols");
-  m_Symbols = symbols;
-}
-
-void SlotBase::addSymbol(const Symbol& symbol) {
-  CORE_ASSERT(std::ranges::find(m_Symbols, symbol) == m_Symbols.end(),
-              "Slot contains repeating symbols");
-  m_Symbols.push_back(symbol);
+void SlotBase::addToPayoutMultiplier(float value) {
+  m_CurrentPayoutBetMultiplier += value;
 }
 
 void SlotBase::spin() {
-  board.resetState();
+  _resetState();
 
   _fillBoard();
 
@@ -42,11 +33,15 @@ void SlotBase::spin() {
       auto passResult{ std::invoke(winCollectionPass, *this) };
 
       switch (passResult) {
+      case WinCollectionPassResult::nextPass:
+        break;
+
       case WinCollectionPassResult::endWin:
         goto breakWinCollection;
         break;
 
       case WinCollectionPassResult::fillBoardInstantly:
+        winCollectionInvalidated = true;
         _fillBoard();
         break;
 
@@ -78,6 +73,12 @@ void SlotBase::spin() {
   }
 }
 
+void SlotBase::clearFillPasses() { m_FillPasses.clear(); }
+
+void SlotBase::clearWinCollectionPasses() {
+  m_WinCollectionPasses.clear();
+}
+
 void SlotBase::registerFillPass(const FillPass& newPass) {
   m_FillPasses.push_back(newPass);
 }
@@ -87,9 +88,14 @@ void SlotBase::registerWinCollectionPass(
   m_WinCollectionPasses.push_back(newPass);
 }
 
+void SlotBase::_resetState() {
+  board.resetState();
+  m_CurrentPayoutBetMultiplier = 0;
+}
+
 void SlotBase::_fillBoard() {
   for (auto&& fillPass : m_FillPasses) {
-    std::invoke(fillPass, *this, m_RandEngine);
+    std::invoke(fillPass, *this);
   }
 }
 
@@ -99,8 +105,8 @@ auto SlotBase::getTraversalPath() const -> TraversalPath {
 void SlotBase::setTraversalPath(const TraversalPath& traversalPath) {
   m_TraversalPath = traversalPath;
 };
-auto SlotBase::getSymbols() const -> std::vector<Symbol> {
-  return m_Symbols;
+auto SlotBase::getSymbolManager() const -> SymbolManagerRef {
+  return m_SymbolManager;
 }
 
 } // namespace plut::core

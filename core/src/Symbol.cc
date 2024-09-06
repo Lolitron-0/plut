@@ -1,15 +1,17 @@
 #include "core/Symbol.hpp"
+#include "core/Assert.h"
 
 namespace plut::core {
 
-Symbol::Symbol()
-    : Symbol{ ' ' } {
-  m_Empty = true;
-}
-
 Symbol::Symbol(char tag)
+    : m_Tag{ tag } {}
+
+Symbol::Symbol(char tag, float probabilityWeight)
     : m_Tag{ tag },
-      m_Empty{ true } {}
+      m_Weight{ probabilityWeight } {
+  CORE_ASSERT(probabilityWeight >= 0.F && probabilityWeight <= 1.F,
+              "Probability must be in [0;1] range");
+}
 
 auto Symbol::operator==(const Symbol& symbol) const -> bool {
   return (this->m_Tag == symbol.m_Tag);
@@ -21,8 +23,6 @@ auto Symbol::operator<(const Symbol& symbol) const -> bool {
 
 auto Symbol::getTag() const -> char { return m_Tag; }
 
-auto Symbol::isEmpty() const -> bool { return m_Empty; }
-auto Symbol::isDisabled() const -> bool { return m_Disabled; }
-void Symbol::disable() { m_Disabled = true; }
-void Symbol::enable() { m_Disabled = false; }
+auto Symbol::getWeight() const -> float { return m_Weight; }
+
 } // namespace plut::core

@@ -2,6 +2,7 @@
 #include "Measurer.hpp"
 #include "SessionOptions.hpp"
 #include "plut.hpp"
+#include <csignal>
 #include <cxxopts.hpp>
 #include <iostream>
 
@@ -16,6 +17,9 @@ auto parseCliArgs(int argc, char** argv) -> SessionOptions {
 		("help,h", "Display help")
 		("slot-file", "path/to/slot.so", 
 		 cxxopts::value<std::string>(opts.pathToSlot))
+		("parallel,j", "Number of jobs to use", 
+		 cxxopts::value<std::size_t>(opts.numJobs)
+		 ->default_value(std::to_string(opts.numJobs)))
 		("spins-per-trial", "Number of spins to use for each trial", 
 		 cxxopts::value<int>(opts.spinsPerTrial)
 		 ->default_value(std::to_string(opts.spinsPerTrial)))
@@ -33,24 +37,48 @@ auto parseCliArgs(int argc, char** argv) -> SessionOptions {
     std::exit(1); // NOLINT
   }
 
+  if (cliMap.as_optional<std::size_t>("parallel").value_or(1) == 0) {
+    std::cerr << "Bad parallel value" << std::endl;
+    std::exit(1); // NOLINT
+  }
+
   BenchmarkLogger().trace("Parsed command args");
   return opts;
 }
 
 } // namespace plut::benchmark
 
+static std::function<void(int)> signalHandler{ [](int) {
+} };
+
+void signalHandlerWrapper(int sig) {
+  std::cout << sig << std::endl;
+  signalHandler(sig);
+}
+
 auto main(int argc, char* argv[]) -> int {
   auto sessionOptions{ plut::benchmark::parseCliArgs(argc, argv) };
   plut::benchmark::BenchmarkLogger().debug(
       "Trying to build load and build cusom slot from {}",
       sessionOptions.pathToSlot);
-  auto slotInstance{ plut::core::SlotLoader::buildCustomSlot(
-      sessionOptions.pathToSlot) };
+  std::shared_ptr<plut::core::SlotBase> slotInstance{
+    plut::core::SlotLoader::buildCustomSlot(sessionOptions.pathToSlot)
+  };
   plut::benchmark::BenchmarkLogger().debug(
       "Custom slot successfully loaded");
 
-  plut::benchmark::Measurer measurer{ std::move(sessionOptions),
-                                      std::move(slotInstance) };
+  plut::benchmark::Measurer measurer{ std::move(sessionOptions) };
 
-  plut::benchmark::BenchmarkLogger().info("Exiting peacefully. Bye!");
+  signalHandler = [&measurer](int sig) {
+    std::string signalStr{ strsignal(sig) };
+    plut::benchmark::BenchmarkLogger().warn("Got {} signal", signalStr);
+    measurer.stop();
+  };
+
+  std::signal(SIGINT, signalHandlerWrapper);  // NOLINT
+  std::signal(SIGTERM, signalHandlerWrapper); // NOLINT
+
+  measurer.startExperiment(slotInstance);
+
+  plut::benchmark::BenchmarkLogger().info("Exiting gracefully. Bye!");
 }

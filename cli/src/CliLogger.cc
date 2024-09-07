@@ -3,6 +3,7 @@
 namespace plut::cli {
 
 CliLogger::CliLogger()
-    : core::LoggerBase("CLI") {}
+    : core::LoggerBase("CLI") {
+}
 
 } // namespace plut::cli

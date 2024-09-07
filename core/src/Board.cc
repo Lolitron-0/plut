@@ -4,7 +4,8 @@
 namespace plut::core {
 
 Board::Board(std::size_t maxRows, std::size_t maxCols)
-    : m_CurrentState{ maxRows, maxCols } {}
+    : m_CurrentState{ maxRows, maxCols } {
+}
 
 void Board::resetState() {
   std::ranges::for_each(m_CurrentState, [](auto& cell) {

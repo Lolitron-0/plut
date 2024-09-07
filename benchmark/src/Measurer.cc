@@ -1,14 +1,80 @@
 #include "Measurer.hpp"
 #include "BenchmarkLogger.hpp"
+#include "Runner.hpp"
 #include <utility>
 
 namespace plut::benchmark {
 
-Measurer::Measurer(SessionOptions opts,
-                   const std::shared_ptr<core::SlotBase>& slotInstance)
-    : m_Opts{ std::move(opts) },
-      m_SlotInstance(slotInstance) {
-  BenchmarkLogger().info("Measurer initialized");
+Measurer::Measurer(SessionOptions opts)
+    : m_Opts{ std::move(opts) } {
+}
+
+Measurer::~Measurer() {
+  if (m_Running) {
+    stop();
+  }
+}
+
+void Measurer::startExperiment(
+    const std::shared_ptr<core::SlotBase>& slotInstance) {
+  m_Running = true;
+
+  for (int i{ 0 }; i < m_Opts.numJobs; i++) {
+    m_Runners.push_back(
+        std::make_unique<Runner>(m_Opts, slotInstance, this));
+    m_Runners.back()->run();
+    BenchmarkLogger().trace("Started runner #{}", i);
+  }
+
+  while (m_Running && (m_Opts.maxTrials == -1 ||
+                       m_Stats.totalTrials < m_Opts.maxTrials)) {
+    while (m_Running && m_Stats.trialSpins < m_Opts.spinsPerTrial) {
+
+      BenchmarkLogger().debug("RTP: {:.2f}%; Spins: {}",
+                              m_Stats.calculatedRTP * 100.F,
+                              m_Stats.totalSpins);
+
+      _mergeStats();
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds{ s_UpdateSleepMs });
+    }
+
+    m_Stats.totalTrials++;
+    m_Stats.trialSpins = 0;
+  }
+}
+
+void Measurer::addBatch(RunnerStatsBatch batch) {
+  std::lock_guard lock{ m_BatchQueueMutex };
+  m_StatBatches.push(std::move(batch));
+};
+
+void Measurer::_mergeStats() {
+  m_BatchQueueMutex.lock();
+  auto batchesToMerge{ m_StatBatches };
+  {
+    std::queue<RunnerStatsBatch> empty{};
+    std::swap(m_StatBatches, empty);
+  }
+  m_BatchQueueMutex.unlock();
+
+  while (!batchesToMerge.empty()) {
+    auto batch{ batchesToMerge.front() };
+    batchesToMerge.pop();
+
+    auto curSpins{ m_Stats.totalSpins + m_Stats.trialSpins };
+    m_Stats.calculatedRTP =
+        (m_Stats.calculatedRTP * curSpins + batch.sumWins) /
+        static_cast<float>(curSpins + batch.numSpins);
+    m_Stats.totalSpins += batch.numSpins;
+  }
+}
+
+void Measurer::stop() {
+  m_Running = false;
+  for (auto& runner : m_Runners) {
+    runner->stop();
+  }
 }
 
 } // namespace plut::benchmark

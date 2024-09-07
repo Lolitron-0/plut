@@ -3,6 +3,7 @@
 namespace plut::benchmark {
 
 BenchmarkLogger::BenchmarkLogger()
-    : core::LoggerBase{ "BENCHMARK" } {}
+    : core::LoggerBase{ "BENCHMARK" } {
+}
 
 } // namespace plut::benchmark

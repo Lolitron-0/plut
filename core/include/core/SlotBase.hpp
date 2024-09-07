@@ -4,6 +4,10 @@
 
 namespace plut::core {
 
+struct SlotStats{
+	float currentSpinWin{0};
+};
+
 class SlotBase {
 public:
   using FillPassBuffer          = std::vector<FillPass>;

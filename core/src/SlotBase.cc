@@ -7,7 +7,8 @@ namespace plut::core {
 
 SlotBase::SlotBase(std::size_t maxRows, std::size_t maxCols)
     : board{ maxRows, maxCols },
-      m_SymbolManager{ std::make_shared<SymbolManager>() } {}
+      m_SymbolManager{ std::make_shared<SymbolManager>() } {
+}
 
 auto SlotBase::getCurrentPayoutBetMultiplier() const -> float {
   return m_CurrentPayoutBetMultiplier;
@@ -73,7 +74,9 @@ void SlotBase::spin() {
   }
 }
 
-void SlotBase::clearFillPasses() { m_FillPasses.clear(); }
+void SlotBase::clearFillPasses() {
+  m_FillPasses.clear();
+}
 
 void SlotBase::clearWinCollectionPasses() {
   m_WinCollectionPasses.clear();

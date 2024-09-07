@@ -1,4 +1,5 @@
 #pragma once
+#include <spdlog/async.h>
 #include <spdlog/spdlog.h>
 
 namespace plut::core {
@@ -55,7 +56,7 @@ private:
       -> std::shared_ptr<spdlog::logger>;
 
 private:
-	static bool s_Muted;
+  static bool s_Muted;
   static bool s_Initialized;
   static std::vector<spdlog::sink_ptr> s_Sinks;
 

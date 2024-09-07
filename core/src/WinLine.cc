@@ -8,10 +8,12 @@ WinLine::WinLine(Offset2D startPoint, WinLinePath path,
                  std::size_t minSymbols)
     : startPoint{ startPoint },
       path{ std::move(path) },
-      minSymbols{ minSymbols } {}
+      minSymbols{ minSymbols } {
+}
 WinLine::WinLine(WinLinePath path, std::size_t minSymbols)
     : path{ std::move(path) },
-      minSymbols{ minSymbols } {}
+      minSymbols{ minSymbols } {
+}
 
 auto operator+(const WinLinePath& a,
                const WinLinePath& b) noexcept -> WinLinePath {

@@ -10,7 +10,8 @@ std::vector<spdlog::sink_ptr> LoggerBase::s_Sinks{};
 LoggerBase::LoggerBase(std::string_view name) {
   if (!s_Initialized) {
     s_Sinks.push_back(
-        std::make_shared<spdlog::sinks::stdout_color_sink_st>());
+        std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+    spdlog::init_thread_pool(10'000, 1);
     s_Initialized = true;
   }
 
@@ -23,8 +24,9 @@ LoggerBase::LoggerBase(std::string_view name) {
 
 auto LoggerBase::_registerSource(std::string_view name)
     -> std::shared_ptr<spdlog::logger> {
-  auto newLogger = std::make_shared<spdlog::logger>(
-      std::string{ name }, s_Sinks.begin(), s_Sinks.end());
+  auto newLogger = std::make_shared<spdlog::async_logger>(
+      std::string{ name }, s_Sinks.begin(), s_Sinks.end(),
+      spdlog::thread_pool());
 
 #ifdef PLUT_NO_LOGS
   newLogger->set_level(spdlog::level::level_enum::off);
@@ -43,11 +45,16 @@ auto LoggerBase::_registerSource(std::string_view name)
   return newLogger;
 }
 
-void LoggerBase::mute() { s_Muted = true; }
+void LoggerBase::mute() {
+  s_Muted = true;
+}
 
-void LoggerBase::unmute() { s_Muted = false; }
+void LoggerBase::unmute() {
+  s_Muted = false;
+}
 
 CoreLogger::CoreLogger()
-    : LoggerBase{ "CORE" } {}
+    : LoggerBase{ "CORE" } {
+}
 
 } // namespace plut::core

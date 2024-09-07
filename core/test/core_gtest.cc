@@ -6,7 +6,9 @@ using namespace plut::core;
 
 class InitEnv : public ::testing::Environment {
 protected:
-  void SetUp() override { LoggerBase::mute(); }
+  void SetUp() override {
+    LoggerBase::mute();
+  }
 };
 
 auto main(int argc, char** argv) -> int {
@@ -96,7 +98,8 @@ TEST(Matrix, IndexOperator) {
 TEST(Logger, Methods) {
   struct TestLogger : LoggerBase {
     TestLogger()
-        : LoggerBase{ "TEST" } {}
+        : LoggerBase{ "TEST" } {
+    }
   };
 
   EXPECT_NO_THROW(TestLogger().trace("msg {}", 0));

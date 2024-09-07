@@ -4,7 +4,8 @@
 namespace plut::core {
 
 Symbol::Symbol(char tag)
-    : m_Tag{ tag } {}
+    : m_Tag{ tag } {
+}
 
 Symbol::Symbol(char tag, float probabilityWeight)
     : m_Tag{ tag },
@@ -21,8 +22,12 @@ auto Symbol::operator<(const Symbol& symbol) const -> bool {
   return (this->m_Tag < symbol.m_Tag);
 }
 
-auto Symbol::getTag() const -> char { return m_Tag; }
+auto Symbol::getTag() const -> char {
+  return m_Tag;
+}
 
-auto Symbol::getWeight() const -> float { return m_Weight; }
+auto Symbol::getWeight() const -> float {
+  return m_Weight;
+}
 
 } // namespace plut::core

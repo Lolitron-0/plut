@@ -10,7 +10,11 @@ Reel::Reel(int spanSize, std::initializer_list<Symbol> symbols)
   }
 }
 
-auto Reel::getSymbols() const -> const ReelBuffer& { return m_Symbols; }
-auto Reel::getSpanSize() const -> int { return m_SpanSize; }
+auto Reel::getSymbols() const -> const ReelBuffer& {
+  return m_Symbols;
+}
+auto Reel::getSpanSize() const -> int {
+  return m_SpanSize;
+}
 
 } // namespace plut::core

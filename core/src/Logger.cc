@@ -5,13 +5,16 @@ namespace plut::core {
 
 bool LoggerBase::s_Muted{ false };
 bool LoggerBase::s_Initialized{ false };
+bool LoggerBase::s_ThreadPoolDisabled{ false };
 std::vector<spdlog::sink_ptr> LoggerBase::s_Sinks{};
 
 LoggerBase::LoggerBase(std::string_view name) {
   if (!s_Initialized) {
     s_Sinks.push_back(
         std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-    spdlog::init_thread_pool(10'000, 1);
+    if (!s_ThreadPoolDisabled) {
+      spdlog::init_thread_pool(10'000, 1);
+    }
     s_Initialized = true;
   }
 
@@ -51,6 +54,10 @@ void LoggerBase::mute() {
 
 void LoggerBase::unmute() {
   s_Muted = false;
+}
+
+void LoggerBase::disableThreadPool() {
+  s_ThreadPoolDisabled = true;
 }
 
 CoreLogger::CoreLogger()

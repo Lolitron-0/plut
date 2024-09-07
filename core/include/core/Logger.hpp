@@ -47,6 +47,7 @@ public:
 
   static void mute();
   static void unmute();
+  static void disableThreadPool();
 
 protected:
   explicit LoggerBase(std::string_view name);
@@ -58,6 +59,7 @@ private:
 private:
   static bool s_Muted;
   static bool s_Initialized;
+	static bool s_ThreadPoolDisabled;
   static std::vector<spdlog::sink_ptr> s_Sinks;
 
   std::shared_ptr<spdlog::logger> m_Handle;

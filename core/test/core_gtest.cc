@@ -8,6 +8,7 @@ class InitEnv : public ::testing::Environment {
 protected:
   void SetUp() override {
     LoggerBase::mute();
+		LoggerBase::disableThreadPool();
   }
 };
 

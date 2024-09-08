@@ -5,8 +5,9 @@
 
 namespace plut::benchmark {
 
-Measurer::Measurer(SessionOptions opts)
-    : m_Opts{ std::move(opts) } {
+Measurer::Measurer(const SessionOptions& opts)
+    : m_Opts{ opts },
+      m_Renderer{ opts } {
 }
 
 Measurer::~Measurer() {
@@ -29,6 +30,7 @@ void Measurer::startExperiment(
   m_Stats.uptimeSW.reset();
 
   m_Renderer.startTUIThread();
+  BenchmarkLogger().info("Started UI threads");
 
   while (m_Running && (m_Opts.maxTrials == -1 ||
                        m_Stats.totalTrials < m_Opts.maxTrials)) {
@@ -50,17 +52,19 @@ void Measurer::startExperiment(
 
 void Measurer::addBatch(RunnerStatsBatch batch) {
   std::lock_guard lock{ m_BatchQueueMutex };
-  m_StatBatches.push(std::move(batch));
+  m_BatchQueue.push(std::move(batch));
 };
 
 void Measurer::_mergeStats() {
   m_BatchQueueMutex.lock();
-  auto batchesToMerge{ m_StatBatches };
+  auto batchesToMerge{ m_BatchQueue };
   {
     std::queue<RunnerStatsBatch> empty{};
-    std::swap(m_StatBatches, empty);
+    std::swap(m_BatchQueue, empty);
   }
   m_BatchQueueMutex.unlock();
+
+  m_Stats.valid = m_Stats.valid || !batchesToMerge.empty();
 
   while (!batchesToMerge.empty()) {
     auto batch{ batchesToMerge.front() };

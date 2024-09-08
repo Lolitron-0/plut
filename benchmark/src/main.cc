@@ -67,7 +67,7 @@ auto main(int argc, char* argv[]) -> int {
   plut::benchmark::BenchmarkLogger().debug(
       "Custom slot successfully loaded");
 
-  plut::benchmark::Measurer measurer{ std::move(sessionOptions) };
+  plut::benchmark::Measurer measurer{ sessionOptions };
 
   signalHandler = [&measurer](int sig) {
     std::string signalStr{ strsignal(sig) };

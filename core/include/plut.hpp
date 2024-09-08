@@ -6,3 +6,4 @@
 #include "core/Macros.hpp"
 #include "core/SymbolManager.hpp"
 #include "core/SlotLoader.hpp"
+#include <spdlog/stopwatch.h>

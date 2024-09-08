@@ -19,20 +19,24 @@ void Measurer::startExperiment(
     const std::shared_ptr<core::SlotBase>& slotInstance) {
   m_Running = true;
 
+  // supervisor thread does not count
   for (int i{ 0 }; i < m_Opts.numJobs; i++) {
     m_Runners.push_back(
         std::make_unique<Runner>(m_Opts, slotInstance, this));
     m_Runners.back()->run();
     BenchmarkLogger().trace("Started runner #{}", i);
   }
+  m_Stats.uptimeSW.reset();
+
+  m_Renderer.startTUIThread();
 
   while (m_Running && (m_Opts.maxTrials == -1 ||
                        m_Stats.totalTrials < m_Opts.maxTrials)) {
     while (m_Running && m_Stats.trialSpins < m_Opts.spinsPerTrial) {
-
-      BenchmarkLogger().debug("RTP: {:.2f}%; Spins: {}",
-                              m_Stats.calculatedRTP * 100.F,
-                              m_Stats.totalSpins);
+      // BenchmarkLogger().debug("RTP: {:.2f}%; Spins: {}",
+      //                         m_Stats.calculatedRTP * 100.F,
+      //                         m_Stats.totalSpins);
+      m_Renderer.sendStats(m_Stats);
 
       _mergeStats();
       std::this_thread::sleep_for(
@@ -68,6 +72,9 @@ void Measurer::_mergeStats() {
         static_cast<float>(curSpins + batch.numSpins);
     m_Stats.totalSpins += batch.numSpins;
   }
+
+  m_Stats.spinsPerSec = m_Stats.totalSpins /
+                        (m_Stats.uptimeSW.elapsed_ms().count() / 1000.);
 }
 
 void Measurer::stop() {
@@ -75,6 +82,7 @@ void Measurer::stop() {
   for (auto& runner : m_Runners) {
     runner->stop();
   }
+  m_Renderer.stop();
 }
 
 } // namespace plut::benchmark

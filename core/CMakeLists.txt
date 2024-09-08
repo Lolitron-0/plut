@@ -1,6 +1,4 @@
 project(${CMAKE_PROJECT_NAME}_core)
-# we will link core to client's .so
-set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 set(SOURCES
     src/SlotBase.cc
@@ -26,10 +24,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
                       -fcoverage-mapping)
 endif()
 
-add_subdirectory(thirdparty/spdlog)
+# Dependencies
 target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
-add_subdirectory(thirdparty/cxxopts)
 target_link_libraries(${PROJECT_NAME} PUBLIC cxxopts)
+
 
 if(PLUT_BUILD_TESTS)
   add_subdirectory(test)

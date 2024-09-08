@@ -1,7 +1,6 @@
-[submodule "core/thirdparty/spdlog"]
-	path = core/thirdparty/spdlog
-	url = https://github.com/gabime/spdlog.git
-	branch = v1.x
-[submodule "core/thirdparty/cxxopts"]
-	path = core/thirdparty/cxxopts
-	url = https://github.com/jarro2783/cxxopts.git
+[submodule "thirdparty/cxxopts"]
+	path = thirdparty/cxxopts
+	url = https://github.com/jarro2783/cxxopts
+[submodule "thirdparty/spdlog"]
+	path = thirdparty/spdlog
+	url = https://github.com/gabime/spdlog

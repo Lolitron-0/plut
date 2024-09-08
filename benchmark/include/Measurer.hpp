@@ -1,6 +1,7 @@
 #pragma once
 #include "Runner.hpp"
 #include "SessionOptions.hpp"
+#include "TUIRenderer.hpp"
 #include "plut.hpp"
 #include <queue>
 
@@ -11,6 +12,8 @@ struct ExperimentStats {
   int trialSpins{ 0 };
   int totalSpins{ 0 };
   float calculatedRTP{ 0 };
+	spdlog::stopwatch uptimeSW;
+  float spinsPerSec{ 0 };
 };
 
 class Measurer : std::enable_shared_from_this<Measurer> {
@@ -30,7 +33,8 @@ private:
   void _mergeStats();
 
 private:
-	bool m_Running{true};
+	TUIRenderer m_Renderer;
+  bool m_Running{ true };
   SessionOptions m_Opts;
   ExperimentStats m_Stats;
   std::vector<std::unique_ptr<Runner>> m_Runners;

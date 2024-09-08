@@ -26,13 +26,19 @@ private:
   int m_Id;
   bool m_ShouldStop;
   SessionOptions m_SessionOptions;
-	RunnerStatsBatch m_CurrentStatsBatch;
+  RunnerStatsBatch m_CurrentStatsBatch;
   std::unique_ptr<core::SlotBase> m_SlotInstance; // copy
   std::unique_ptr<std::thread> m_Thread;
   Measurer* m_Supervisor;
 
   static int s_IdCounter;
-  static constexpr int s_StatsBatchSize{ 10'000 };
+  static constexpr int s_StatsBatchSize{
+#ifdef NDEBUG
+    10'000
+#else
+    100
+#endif
+  };
 };
 
 } // namespace plut::benchmark

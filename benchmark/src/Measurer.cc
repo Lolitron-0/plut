@@ -50,6 +50,7 @@ void Measurer::startExperiment(
     }
 
     m_Stats.totalTrials++;
+    m_Stats.totalSpins += m_Stats.trialSpins;
     m_Stats.trialSpins = 0;
   }
 }
@@ -70,19 +71,19 @@ void Measurer::_mergeStats() {
 
   m_Stats.valid = m_Stats.valid || !batchesToMerge.empty();
 
+  auto curSpins{ m_Stats.totalSpins + m_Stats.trialSpins };
   while (!batchesToMerge.empty()) {
     auto batch{ batchesToMerge.front() };
     batchesToMerge.pop();
 
-    auto curSpins{ m_Stats.totalSpins + m_Stats.trialSpins };
     m_Stats.calculatedRTP =
         (m_Stats.calculatedRTP * curSpins + batch.sumWins) /
         static_cast<float>(curSpins + batch.numSpins);
-    m_Stats.totalSpins += batch.numSpins;
+    m_Stats.trialSpins += batch.numSpins;
   }
 
-  m_Stats.spinsPerSec = m_Stats.totalSpins /
-                        (m_Stats.uptimeSW.elapsed_ms().count() / 1000.);
+  m_Stats.spinsPerSec =
+      curSpins / (m_Stats.uptimeSW.elapsed_ms().count() / 1000.);
 }
 
 void Measurer::stop() {
@@ -95,6 +96,7 @@ void Measurer::stop() {
 
 void Measurer::notifyUIExit() {
   m_StopRequested = true;
+  BenchmarkLogger().warn("Got interruption request from UI");
 }
 
 } // namespace plut::benchmark

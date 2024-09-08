@@ -8,6 +8,8 @@
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
 #include <ftxui/screen/terminal.hpp>
+#include <spdlog/fmt/chrono.h>
+#include <spdlog/fmt/fmt.h>
 
 namespace plut::benchmark {
 
@@ -38,6 +40,7 @@ void TUIRenderer::sendStats(const ExperimentStats& stats) {
   m_ExecsPerSecHistory.push_front(stats.spinsPerSec);
   m_TrialProgress =
       static_cast<float>(stats.trialSpins) / m_SessionOpts.spinsPerTrial;
+  std::cout << stats.trialSpins;
 }
 
 void TUIRenderer::_startScreenLoop() {
@@ -51,10 +54,27 @@ void TUIRenderer::_startScreenLoop() {
 
   auto mainRenderer{ ui::Renderer([&, spinnerFrame = 0]() mutable {
     if (m_GotFirstStats) {
-      return vbox({
-                 hbox({ _getExecsPerSecGraph() | flex }) | yflex |
-                     size(HEIGHT, Constraint::LESS_THAN, 20),
-             }) |
+      auto now{ std::chrono::system_clock::now() };
+      auto timeStr{ fmt::format("{:%H:%M}", now) };
+      return vbox({ hbox({ filler(),
+                           text("PLUT BENCHMARK") | hcenter |
+                               color(Color::Purple),
+                           filler(),
+                           text(timeStr) | color(Color::Violet) }) |
+                        xflex | yflex_shrink,
+                    separator(),
+                    hbox({ _getExecsPerSecGraph() | flex }) | yflex |
+                        size(HEIGHT, Constraint::LESS_THAN, 20),
+                    separator(),
+                    hbox({ text("Trial progress: ") | vcenter,
+                           gaugeRight(m_TrialProgress) | flex | border |
+                               color(Color::LightSteelBlue),
+                           text(core::utils::prettyPostfix(
+                               m_SessionOpts.spinsPerTrial *
+                               m_TrialProgress)) |
+                               vcenter }) |
+                        xflex,
+                    separator() }) |
              flex_grow | border;
     }
 

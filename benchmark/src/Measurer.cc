@@ -7,7 +7,7 @@ namespace plut::benchmark {
 
 Measurer::Measurer(const SessionOptions& opts)
     : m_Opts{ opts },
-      m_Renderer{ opts } {
+      m_Renderer{ opts, this } {
 }
 
 Measurer::~Measurer() {
@@ -29,7 +29,7 @@ void Measurer::startExperiment(
   }
   m_Stats.uptimeSW.reset();
 
-  m_Renderer.startTUIThread();
+  m_Renderer.startUIThread();
   BenchmarkLogger().info("Started UI threads");
 
   while (m_Running && (m_Opts.maxTrials == -1 ||
@@ -43,6 +43,10 @@ void Measurer::startExperiment(
       _mergeStats();
       std::this_thread::sleep_for(
           std::chrono::milliseconds{ s_UpdateSleepMs });
+
+      if (m_StopRequested) {
+        stop();
+      }
     }
 
     m_Stats.totalTrials++;
@@ -87,6 +91,10 @@ void Measurer::stop() {
     runner->stop();
   }
   m_Renderer.stop();
+}
+
+void Measurer::notifyUIExit() {
+  m_StopRequested = true;
 }
 
 } // namespace plut::benchmark

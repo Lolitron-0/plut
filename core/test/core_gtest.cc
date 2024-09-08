@@ -8,7 +8,7 @@ class InitEnv : public ::testing::Environment {
 protected:
   void SetUp() override {
     LoggerBase::mute();
-		LoggerBase::disableThreadPool();
+    LoggerBase::disableThreadPool();
   }
 };
 
@@ -312,4 +312,11 @@ TEST(WinCollectionPassPreset, WinLineNoStartPointFull) {
   while (s.getCurrentPayoutBetMultiplier() == 0) {
     s.spin();
   }
+}
+
+TEST(Utils, PrettyPostfix) {
+  EXPECT_EQ(utils::prettyPostfix(123), "123");
+  EXPECT_EQ(utils::prettyPostfix(1123), "1.12k");
+  EXPECT_EQ(utils::prettyPostfix(23'539'203), "23.53M");
+  EXPECT_EQ(utils::prettyPostfix(852'508'399'180), "852.50B");
 }

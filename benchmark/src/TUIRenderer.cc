@@ -1,6 +1,9 @@
 #include "TUIRenderer.hpp"
 #include "BenchmarkLogger.hpp"
 #include "Measurer.hpp"
+#include "Utils.hpp"
+#include <csignal>
+#include <cstdlib>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
@@ -8,10 +11,10 @@
 
 namespace plut::benchmark {
 
-TUIRenderer::TUIRenderer(SessionOptions opts)
+TUIRenderer::TUIRenderer(SessionOptions opts, Measurer* parent)
     : m_SessionOpts{ std::move(opts) },
-      m_Screen{ ui::ScreenInteractive::Fullscreen() },
-      m_ExecsPerSecHistory(500, 0.F) {
+      m_ExecsPerSecHistory(500, 0.F),
+      m_Parent{ parent } {
 }
 
 TUIRenderer::~TUIRenderer() {
@@ -20,7 +23,7 @@ TUIRenderer::~TUIRenderer() {
   }
 }
 
-void TUIRenderer::startTUIThread() {
+void TUIRenderer::startUIThread() {
   m_UIThread = std::make_unique<std::thread>([this] {
     _startScreenLoop();
   });
@@ -40,6 +43,11 @@ void TUIRenderer::sendStats(const ExperimentStats& stats) {
 void TUIRenderer::_startScreenLoop() {
   using namespace ui;
   m_Running = true;
+
+  m_Screen = std::make_shared<ui::ScreenInteractive>(
+      plut::benchmark::utils::LazyPRValue{ [] {
+        return ui::ScreenInteractive::Fullscreen();
+      } });
 
   auto mainRenderer{ ui::Renderer([&, spinnerFrame = 0]() mutable {
     if (m_GotFirstStats) {
@@ -61,13 +69,13 @@ void TUIRenderer::_startScreenLoop() {
   m_ScreenRefreshThread = std::make_unique<std::thread>([this] {
     while (m_Running) {
       std::this_thread::sleep_for(std::chrono::milliseconds{ 100 });
-      m_Screen.Post(ui::Event::Custom);
+      m_Screen->Post(ui::Event::Custom);
     }
   });
 
-  m_Screen.Loop(mainRenderer);
-  m_Running = false;
-  m_ScreenRefreshThread->join();
+  m_Screen->Loop(mainRenderer);
+  // exited from UI loop
+  m_Parent->notifyUIExit();
 }
 
 void TUIRenderer::stop() {
@@ -98,22 +106,25 @@ auto TUIRenderer::_getExecsPerSecGraph() -> ui::Element {
     return result;
   } };
 
-  auto execsGraph{ vbox({
-                       text("Execs per sec") | hcenter,
-                       hbox({
-                           vbox({
-                               text(std::to_string(static_cast<int>(
-                                   m_ExecsPerSecBounds.second))),
-                               filler(),
-                               text(std::to_string(static_cast<int>(
-                                   m_ExecsPerSecBounds.first))),
-                           }),
-                           separator(),
-                           graph(execsGraphFn) | flex,
-                       }) | flex |
-                           border,
-                   }) |
-                   flex };
+  auto execsGraph{
+    vbox({
+        text("Execs per sec") | hcenter,
+        hbox({
+            vbox({
+                text(plut::core::utils::prettyPostfix(
+                    static_cast<std::size_t>(
+                        m_ExecsPerSecBounds.second))),
+                filler(),
+                text(plut::core::utils::prettyPostfix(
+                    static_cast<std::size_t>(m_ExecsPerSecBounds.first))),
+            }),
+            separator(),
+            graph(execsGraphFn) | flex,
+        }) | flex |
+            border,
+    }) |
+    flex
+  };
   return execsGraph;
 }
 } // namespace plut::benchmark

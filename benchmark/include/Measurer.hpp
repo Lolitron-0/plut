@@ -27,6 +27,7 @@ public:
   void startExperiment(
       const std::shared_ptr<core::SlotBase>& slotInstance);
   void stop();
+  void notifyUIExit();
 
 private:
   void addBatch(RunnerStatsBatch batch);
@@ -41,6 +42,7 @@ private:
   std::queue<RunnerStatsBatch> m_BatchQueue;
   std::mutex m_BatchQueueMutex;
   TUIRenderer m_Renderer;
+	bool m_StopRequested{false};
 
   constexpr static int s_UpdateSleepMs{ 1000 };
 };
